@@ -137,4 +137,4 @@ if __name__ == '__main__':
 
     
     create_pkl_version(videos_root,annot_root)
-
+    test_pkl_version()
