@@ -10,7 +10,7 @@ import torchvision.transforms as transforms
 from PIL import Image
 from volleyball_annot_loader import load_tracking_annot
 
-dataset_root = '/home/moustafa/0hdd/research/sfu/volleyball-datasets'
+dataset_root = '/kaggle/input/volleyball'
 
 
 def check():
@@ -80,7 +80,7 @@ def extract_features(clip_dir_path, annot_file, output_file, model, preprocess, 
                 image = Image.open(img_path).convert('RGB')
 
                 if image_level:
-                    preprocessed_image = preprocess(image).unsqueeze(0)
+                    preprocessed_image = preprocess(image).unsqueeze(0) # unsqueeze(dim) : adds a dimension of size 1 at position 0, essential for torch.cat
                     dnn_repr = model(preprocessed_image)
                     dnn_repr = dnn_repr.view(1, -1)
                 else:
@@ -133,9 +133,9 @@ if __name__ == '__main__':
     image_level = False
     model, preprocess = prepare_model(image_level)
 
-    videos_root = f'{dataset_root}/videos'
-    annot_root = f'{dataset_root}/volleyball_tracking_annotation'
-    output_root = f'{dataset_root}/features/image-level/resnet'
+    videos_root = f'{dataset_root}/volleyball_/videos'
+    annot_root = f'{dataset_root}/volleyball_tracking_annotation/volleyball_tracking_annotation'
+    output_root = f'/kaggle/working/features/image-level/resnet'
 
     videos_dirs = os.listdir(videos_root)
     videos_dirs.sort()

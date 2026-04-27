@@ -6,7 +6,7 @@ from boxinfo import BoxInfo
 
 
 
-dataset_root = '/home/moustafa/0hdd/research/sfu/volleyball-datasets'
+dataset_root = '/kaggle/input/volleyball'
 
 
 
@@ -114,19 +114,16 @@ def load_volleyball_dataset(videos_root, annot_root):
     return videos_annot
 
 
-def create_pkl_version():
+def create_pkl_version(videos_root,annot_root):
     # You can use this function to create and save pkl version of the dataset
-    videos_root = f'{dataset_root}/videos'
-    annot_root = f'{dataset_root}/volleyball_tracking_annotation'
-
     videos_annot = load_volleyball_dataset(videos_root, annot_root)
 
-    with open(f'{dataset_root}/annot_all.pkl', 'wb') as file:
+    with open(f'/kaggle/working/annot_all.pkl', 'wb') as file: # 'wb' : write binary
         pickle.dump(videos_annot, file)
 
 
 def test_pkl_version():
-    with open(f'{dataset_root}/annot_all.pkl', 'rb') as file:
+    with open(f'/kaggle/working/annot_all.pkl', 'rb') as file:
         videos_annot = pickle.load(file)
 
     boxes: List[BoxInfo] = videos_annot['0']['13456']['frame_boxes_dct'][13454]
@@ -135,8 +132,9 @@ def test_pkl_version():
 
 
 if __name__ == '__main__':
-    annot_file = f'{dataset_root}/volleyball_tracking_annotation/4/24745/24745.txt'
-    clip_dir_path = os.path.dirname(annot_file).replace('volleyball_tracking_annotation', 'videos')
+    videos_root = f'{dataset_root}/volleyball_/videos/'
+    annot_root = f'{dataset_root}/volleyball_tracking_annotation/volleyball_tracking_annotation/'
 
-    vis_clip(annot_file, clip_dir_path)
+    
+    create_pkl_version(videos_root,annot_root)
 
