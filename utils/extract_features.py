@@ -101,7 +101,7 @@ def extract_features(clip_dir_path, annot_file, output_file, model, preprocess, 
                     dnn_repr = dnn_repr.view(len(preprocessed_images), -1)  # 12 x 2048 for resnet 50
 
                 # uncomment to save features
-                #np.save(output_file, dnn_repr.numpy())
+                np.save(output_file, dnn_repr.numpy())
             except Exception as e:
                 print(f"An error occurred: {e}")
 
