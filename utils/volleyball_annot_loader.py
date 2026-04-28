@@ -131,8 +131,25 @@ def test_pkl_version():
 
 
 if __name__ == '__main__':
-    videos_root = f'{dataset_root}/volleyball/videos/'
+    videos_root = f'{dataset_root}/volleyball_/videos/'
     annot_root = f'{dataset_root}/volleyball_tracking_annotation/'
         
     create_pkl_version(videos_root,annot_root)
     test_pkl_version()
+
+
+'''
+videos_annot = {
+    video_dir : {
+        clip_annot : {
+            'category': clip_category,
+            'frame_boxes_dct': {
+                {frame : all 12 palyers boxes info}
+             }
+        }
+    
+    }
+}
+
+
+'''
