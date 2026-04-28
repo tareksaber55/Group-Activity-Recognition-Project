@@ -10,7 +10,7 @@ import torchvision.transforms as transforms
 from PIL import Image
 from volleyball_annot_loader import load_tracking_annot
 
-dataset_root = '/kaggle/input/volleyball'
+dataset_root = '/kaggle/input/datasets/ahmedmohamed365/volleyball'
 
 
 def check():
@@ -104,26 +104,6 @@ def extract_features(clip_dir_path, annot_file, output_file, model, preprocess, 
                 np.save(output_file, dnn_repr.numpy())
             except Exception as e:
                 print(f"An error occurred: {e}")
-
-
-
-def temp():
-    categories_dct = {
-        'l-pass': 0,
-        'r-pass': 1,
-        'l-spike': 2,
-        'r_spike': 3,
-        'l_set': 4,
-        'r_set': 5,
-        'l_winpoint': 6,
-        'r_winpoint': 7
-    }
-
-    train_ids = ["1", "3", "6", "7", "10", "13", "15", "16", "18", "22", "23", "31",
-                 "32", "36", "38", "39", "40", "41", "42", "48", "50", "52", "53", "54"]
-
-
-    val_ids = ["0", "2", "8", "12", "17", "19", "24", "26", "27", "28", "30", "33", "46", "49", "51"]
 
 
 if __name__ == '__main__':
