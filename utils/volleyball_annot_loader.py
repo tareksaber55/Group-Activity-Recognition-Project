@@ -6,8 +6,7 @@ from boxinfo import BoxInfo
 
 
 
-dataset_root = '/kaggle/input/volleyball'   
-
+dataset_root = '/kaggle/input/ahmedmohamed365-volleyball'
 
 def load_tracking_annot(path):
     with open(path, 'r') as file:
@@ -131,9 +130,8 @@ def test_pkl_version():
 
 
 if __name__ == '__main__':
-    videos_root = f'{dataset_root}/volleyball_/videos/'
-    annot_root = f'{dataset_root}/volleyball_tracking_annotation/'
-        
+    videos_root = f'{dataset_root}/volleyball/videos/'
+    annot_root = f'{dataset_root}/volleyball_tracking_annotation/' 
     create_pkl_version(videos_root,annot_root)
     test_pkl_version()
 
