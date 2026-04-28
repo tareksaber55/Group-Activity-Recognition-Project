@@ -51,9 +51,11 @@ def prepare_model(image_level = False):
 
     return model, preprocess , device
 
-
-def extract_features(clip_dir_path, annot_file, output_file, model, preprocess,device ,image_level=False):
+def extract_features(clip_dir_path, annot_file, output_file, model, preprocess, device, image_level=False):
     frame_boxes = load_tracking_annot(annot_file)
+    
+    # 1. Create a container to hold all frames
+    all_clip_features = {} 
 
     with torch.no_grad():
         for frame_id, boxes_info in frame_boxes.items():
@@ -62,31 +64,26 @@ def extract_features(clip_dir_path, annot_file, output_file, model, preprocess,d
                 image = Image.open(img_path).convert('RGB')
 
                 if image_level:
-                    preprocessed_image = preprocess(image).unsqueeze(0).to(device) # unsqueeze(dim) : adds a dimension of size 1 at position 0, essential for torch.cat
-                    dnn_repr = model(preprocessed_image)
-                    dnn_repr = dnn_repr.view(1, -1)
+                    preprocessed_image = preprocess(image).unsqueeze(0).to(device)
+                    dnn_repr = model(preprocessed_image).view(1, -1)
                 else:
-                    # for each image player's box, extract cropped images, extract features
                     preprocessed_images = []
                     for box_info in boxes_info:
                         x1, y1, x2, y2 = box_info.box
                         cropped_image = image.crop((x1, y1, x2, y2))
-
-                        if False:   # visualize a crop
-                            cv2.imshow('Cropped Image', np.array(cropped_image))
-                            cv2.waitKey(0)
-
                         preprocessed_images.append(preprocess(cropped_image).unsqueeze(0))
 
                     preprocessed_images = torch.cat(preprocessed_images).to(device)
-                    dnn_repr = model(preprocessed_images)    # Batch Processing
-                    dnn_repr = dnn_repr.view(len(preprocessed_images), -1)  # 12 x 2048 for resnet 50
+                    dnn_repr = model(preprocessed_images).view(len(preprocessed_images), -1)
 
-                # uncomment to save features
-                np.save(output_file, dnn_repr.cpu().numpy())
+                # 2. Store this frame's features in our container
+                all_clip_features[frame_id] = dnn_repr.cpu().numpy()
+
             except Exception as e:
-                print(f"An error occurred: {e}")
+                print(f"Error: {e}")
 
+    # 3. SAVE ONCE (Move this outside the loop)
+    np.save(output_file, all_clip_features)
 
 if __name__ == '__main__':
 

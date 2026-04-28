@@ -1,8 +1,12 @@
 import os
 from torch.utils.data import Dataset
+import pickle
 
 class ImageLevelDataset(Dataset):
-    def __init__(self, input_root, labels_root):
+    def __init__(self, input_root, annot_pkl):
+        with open(f'/kaggle/working/annot_all.pkl', 'rb') as file:
+            videos_annot = pickle.load(file)
+        
         videos_dir = os.listdir(input_root)
         videos_dir.sort()
 
@@ -25,7 +29,7 @@ class ImageLevelDataset(Dataset):
                     continue
 
                 input_path = os.path.join(input_root, video_dir, clip_dir, f'{clip_dir}.npy')
-                label_path = os.path.join(labels_root, video_dir, clip_dir, f'{clip_dir}.json')
+                label_path = videos_annot[video_dir][clip_dir]['category']
 
                 self.idx_to_output[i] = (input_path, label_path)
                 i += 1
