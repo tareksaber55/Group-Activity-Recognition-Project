@@ -90,43 +90,47 @@ def extract_features(clip_dir_path, annot_file, output_file, model, preprocess,d
 
 if __name__ == '__main__':
 
-
-    # image_level: extract features for the whole image or just a crop
-    image_level = False
-    model, preprocess,device = prepare_model(image_level)
-
     videos_root = f'{dataset_root}/volleyball_/videos'
     annot_root = f'{dataset_root}/volleyball_tracking_annotation/volleyball_tracking_annotation'
-    output_root = f'/kaggle/working/features/image-level/resnet'
 
     videos_dirs = os.listdir(videos_root)
     videos_dirs.sort()
 
-    # Iterate on each video and for each video iterate on each clip
-    for idx, video_dir in enumerate(videos_dirs):
-        video_dir_path = os.path.join(videos_root, video_dir)
+    for i in range(2):
+        if i == 0:
+            image_level = False
+            output_root = f'/kaggle/working/features/image-level/resnet'
+        else:
+            image_level = True
+            output_root = f'/kaggle/working/features/person-level/resnet'
+        
+        model, preprocess,device = prepare_model(image_level)
 
-        if not os.path.isdir(video_dir_path):
-            continue
+        # Iterate on each video and for each video iterate on each clip
+        for idx, video_dir in enumerate(videos_dirs):
+            video_dir_path = os.path.join(videos_root, video_dir)
 
-        print(f'{idx}/{len(videos_dirs)} - Processing Dir {video_dir_path}')
-
-        clips_dir = os.listdir(video_dir_path)
-        clips_dir.sort()
-
-        for clip_dir in clips_dir:
-            clip_dir_path = os.path.join(video_dir_path, clip_dir)
-
-            if not os.path.isdir(clip_dir_path):
+            if not os.path.isdir(video_dir_path):
                 continue
 
-            print(f'\t{clip_dir_path}')
+            print(f'{idx}/{len(videos_dirs)} - Processing Dir {video_dir_path}')
 
-            annot_file = os.path.join(annot_root, video_dir, clip_dir, f'{clip_dir}.txt')
-            output_file = os.path.join(output_root, video_dir)
+            clips_dir = os.listdir(video_dir_path)
+            clips_dir.sort()
 
-            if not os.path.exists(output_file):
-                os.makedirs(output_file)
+            for clip_dir in clips_dir:
+                clip_dir_path = os.path.join(video_dir_path, clip_dir)
 
-            output_file = os.path.join(output_file, f'{clip_dir}.npy')
-            extract_features(clip_dir_path, annot_file, output_file, model, preprocess,device ,image_level = image_level)
+                if not os.path.isdir(clip_dir_path):
+                    continue
+
+                print(f'\t{clip_dir_path}')
+
+                annot_file = os.path.join(annot_root, video_dir, clip_dir, f'{clip_dir}.txt')
+                output_file = os.path.join(output_root, video_dir)
+
+                if not os.path.exists(output_file):
+                    os.makedirs(output_file)
+
+                output_file = os.path.join(output_file, f'{clip_dir}.npy')
+                extract_features(clip_dir_path, annot_file, output_file, model, preprocess,device ,image_level = image_level)
