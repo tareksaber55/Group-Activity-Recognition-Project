@@ -131,7 +131,7 @@ def test_pkl_version():
 
 if __name__ == '__main__':
     videos_root = f'{dataset_root}/volleyball_/videos/'
-    annot_root = f'{dataset_root}/volleyball_tracking_annotation/' 
+    annot_root = f'{dataset_root}/volleyball_tracking_annotation/volleyball_tracking_annotation/' 
     create_pkl_version(videos_root,annot_root)
     test_pkl_version()
 
