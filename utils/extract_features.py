@@ -13,27 +13,6 @@ from volleyball_annot_loader import load_tracking_annot
 dataset_root = '/kaggle/input/datasets/ahmedmohamed365/volleyball'
 
 
-def check():
-    print('torch: version', torch.__version__)
-    # Check for availability of CUDA (GPU)
-    if torch.cuda.is_available():
-        print("CUDA is available.")
-        # Get the number of GPU devices
-        num_devices = torch.cuda.device_count()
-        print(f"Number of GPU devices: {num_devices}")
-
-        # Print details for each CUDA device
-        for i in range(num_devices):
-            print(f"Device {i}: {torch.cuda.get_device_name(i)}")
-    else:
-        print("CUDA is not available. Using CPU.")
-
-    # Get the name of the current device
-    current_device = torch.cuda.current_device() if torch.cuda.is_available() else "CPU"
-    print(f"Current device: {current_device}")
-
-
-
 
 def prepare_model(image_level = False):
     if image_level:
@@ -53,7 +32,6 @@ def prepare_model(image_level = False):
         ])
 
     # Check if a GPU is available and if not, use a CPU
-    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # resnet50 alexnet
     model = models.resnet50(pretrained=True)  # You can also use 'mobilenet_v3_large'
@@ -61,8 +39,6 @@ def prepare_model(image_level = False):
     # Remove the classification head (i.e., the fully connected layers)
     model = nn.Sequential(*(list(model.children())[:-1]))
 
-    # Send the model to the device (CPU or GPU)
-    model.to(device)
 
     # Set the model to evaluation mode
     model.eval()
@@ -107,7 +83,7 @@ def extract_features(clip_dir_path, annot_file, output_file, model, preprocess, 
 
 
 if __name__ == '__main__':
-    check()
+
 
     # image_level: extract features for the whole image or just a crop
     image_level = False
