@@ -7,9 +7,15 @@ class Logger():
         if not os.path.exists(file_path):
             with open(file_path,'w',newline='') as f:
                 writer = csv.writer(f)
-                writer.writerow(['epoch','loss','accuracy','LR'])
+                writer.writerow(['epoch',
+                                 'train_loss','val_loss',
+                                 'train_accuracy','val_accuracy',
+                                 'LR'])
         
-    def write(self,epoch,loss,accuracy,lr):
+    def write(self,epoch,train_loss,val_loss,train_accuracy,val_accuracy,accuracy,lr):
         with open(self.file_path,'a',newline='') as f:
             writer = csv.writer(f)
-            writer.writerow([epoch,loss,accuracy,lr])
+            writer.writerow([epoch,
+                             train_loss,val_loss,
+                             train_accuracy,val_accuracy
+                             ,lr])
