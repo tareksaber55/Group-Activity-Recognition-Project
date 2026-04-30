@@ -34,7 +34,7 @@ def prepare_model(image_level = False):
     # Check if a GPU is available and if not, use a CPU
 
     # resnet50 alexnet
-    model = models.resnet50(pretrained=True)  # You can also use 'mobilenet_v3_large'
+    model = models.resnet50(weights = models.ResNet50_Weights.DEFAULT)  # You can also use 'mobilenet_v3_large'
 
     # Remove the classification head (i.e., the fully connected layers)
     model = nn.Sequential(*(list(model.children())[:-1]))
