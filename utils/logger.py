@@ -10,12 +10,14 @@ class Logger():
                 writer.writerow(['epoch',
                                  'train_loss','val_loss',
                                  'train_accuracy','val_accuracy',
+                                 'train_f1score','val_f1score',
                                  'LR'])
         
-    def write(self,epoch,train_loss,val_loss,train_accuracy,val_accuracy,accuracy,lr):
+    def write(self,epoch,train_loss,val_loss,train_accuracy,val_accuracy,train_f1score,val_f1score,lr):
         with open(self.file_path,'a',newline='') as f:
             writer = csv.writer(f)
             writer.writerow([epoch,
                              train_loss,val_loss,
-                             train_accuracy,val_accuracy
-                             ,lr])
+                             train_accuracy,val_accuracy,
+                             train_f1score,val_f1score,
+                             lr])
