@@ -26,7 +26,7 @@ def train(model,optimizer,criterion,train_loader,val_loader,n_epoch,scheduler,de
             loss.backward()
             optimizer.step()
             epoch_loss += loss.item()
-            _,predicted = torch.max(outputs.data,1)
+            _,predicted = torch.max(outputs,1)
             total_labels += y_batch.size(0)
             correct_labels += (predicted == y_batch).sum().item()
 
@@ -36,7 +36,7 @@ def train(model,optimizer,criterion,train_loader,val_loader,n_epoch,scheduler,de
         epoch_loss /= len(train_loader)
         train_accuracy = (correct_labels * 100) / total_labels
         train_f1score = f1_score(all_labels,all_preds,average='macro')
-        val_loss , val_accuracy , val_f1score = evaluate(model,val_loader)
+        val_loss , val_accuracy , val_f1score = evaluate(model,val_loader,criterion,device)
         logger.write(
             epoch,
             epoch_loss,val_loss,
