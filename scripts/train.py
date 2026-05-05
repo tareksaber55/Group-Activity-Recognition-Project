@@ -5,10 +5,12 @@ from utils.logger import Logger
 import os
 from eval import evaluate
 from sklearn.metrics import f1_score
+from torch.utils.tensorboard import SummaryWriter
 
 def train(model,optimizer,criterion,train_loader,val_loader,n_epoch,scheduler,device,output_path):
     os.makedirs(output_path,exist_ok=True)
     logger = Logger(output_path)
+    writer = SummaryWriter(log_dir=output_path)
     model.to(device)
     best_loss = float('inf')
     for epoch in range(n_epoch):
@@ -44,6 +46,8 @@ def train(model,optimizer,criterion,train_loader,val_loader,n_epoch,scheduler,de
             train_f1score,val_f1score,
             optimizer.param_groups[0]['lr']
         )
+        writer.add_scalar('Val Loss',val_loss,epoch)
+        writer.add_scalar('Val Vccuracy',val_accuracy,epoch)
         if val_loss < best_loss:
             best_loss = val_loss
             checkpoint = {
@@ -56,11 +60,12 @@ def train(model,optimizer,criterion,train_loader,val_loader,n_epoch,scheduler,de
             os.makedirs(checkpoint_dir,exist_ok=True)
             torch.save(checkpoint,os.path.join(checkpoint_dir,'checkpoint.pth'))
         if scheduler:
+            writer.add_scalar('Learning Rate',optimizer.param_groups[0]['lr'],epoch)
             if isinstance(scheduler , optim.lr_scheduler.ReduceLROnPlateau):
                 scheduler.step(val_loss)
             else:
                 scheduler.step()
         print(f"epoch {epoch} | train loss {epoch_loss:.4f} | val loss {val_loss:.4f} | val acc {val_accuracy:.2f} | val f1 {val_f1score:.4f}")
+    writer.close()
 
-        
         
