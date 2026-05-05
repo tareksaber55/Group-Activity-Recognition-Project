@@ -23,5 +23,5 @@ def evaluate(model,val_loader,criterion,device):
         val_accuracy = (correct_labels*100)/total_labels
         val_f1score = f1_score(all_labels,all_preds,average='macro')
         val_loss = total_loss / len(val_loader)
-        return val_loss,val_accuracy,val_f1score
+        return val_loss,val_accuracy,val_f1score,all_labels,all_preds
 

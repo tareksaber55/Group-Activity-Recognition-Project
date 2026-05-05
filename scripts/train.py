@@ -38,7 +38,7 @@ def train(model,optimizer,criterion,train_loader,val_loader,n_epoch,scheduler,de
         epoch_loss /= len(train_loader)
         train_accuracy = (correct_labels * 100) / total_labels
         train_f1score = f1_score(all_labels,all_preds,average='macro')
-        val_loss , val_accuracy , val_f1score = evaluate(model,val_loader,criterion,device)
+        val_loss , val_accuracy , val_f1score,_,_ = evaluate(model,val_loader,criterion,device)
         logger.write(
             epoch,
             epoch_loss,val_loss,
