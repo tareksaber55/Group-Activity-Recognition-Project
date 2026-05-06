@@ -48,6 +48,8 @@ def train(model,optimizer,criterion,train_loader,val_loader,n_epoch,scheduler,de
         )
         writer.add_scalar('Val Loss',val_loss,epoch)
         writer.add_scalar('Val Vccuracy',val_accuracy,epoch)
+        writer.add_scalar('Train Loss',epoch_loss,epoch)
+        writer.add_scalar('Train Vccuracy',train_accuracy,epoch)
         if val_loss < best_loss:
             best_loss = val_loss
             checkpoint = {
