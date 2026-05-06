@@ -7,13 +7,11 @@ from eval import evaluate
 from sklearn.metrics import f1_score
 from torch.utils.tensorboard import SummaryWriter
 
-def train(model,optimizer,criterion,train_loader,val_loader,n_epoch,scheduler,device,output_path):
-    os.makedirs(output_path,exist_ok=True)
-    logger = Logger(output_path)
+def train(model,optimizer,criterion,train_loader,val_loader,epochs,scheduler,device,output_path):
+    logger = Logger(os.path.join(output_path,'logs.csv'))
     writer = SummaryWriter(log_dir=output_path)
-    model.to(device)
     best_loss = float('inf')
-    for epoch in range(n_epoch):
+    for epoch in range(epochs):
         model.train()
         epoch_loss = 0
         correct_labels = 0
@@ -47,9 +45,9 @@ def train(model,optimizer,criterion,train_loader,val_loader,n_epoch,scheduler,de
             optimizer.param_groups[0]['lr']
         )
         writer.add_scalar('Val Loss',val_loss,epoch)
-        writer.add_scalar('Val Vccuracy',val_accuracy,epoch)
+        writer.add_scalar('Val Accuracy',val_accuracy,epoch)
         writer.add_scalar('Train Loss',epoch_loss,epoch)
-        writer.add_scalar('Train Vccuracy',train_accuracy,epoch)
+        writer.add_scalar('Train Accuracy',train_accuracy,epoch)
         if val_loss < best_loss:
             best_loss = val_loss
             checkpoint = {

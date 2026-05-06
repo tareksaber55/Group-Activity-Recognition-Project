@@ -59,9 +59,9 @@ class PersonLevelDataset(Dataset):
 
 def temp():
     categories_dct = {
-        'l-pass': 0,
-        'r-pass': 1,
-        'l-spike': 2,
+        'l_pass': 0,
+        'r_pass': 1,
+        'l_spike': 2,
         'r_spike': 3,
         'l_set': 4,
         'r_set': 5,

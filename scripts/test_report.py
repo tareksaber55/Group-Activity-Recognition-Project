@@ -9,8 +9,8 @@ class report:
         self.all_preds = all_preds
         self.team_level = team_level
         self.team_labels = {
-            0:'l-pass',     1:'r-pass',
-            2:'l-spike',    3:'r_spike',
+            0:'l_pass',     1:'r_pass',
+            2:'l_spike',    3:'r_spike',
             4:'l_set',      5:'r_set',
             6:'l_winpoint', 7:'r_winpoint'
         }
