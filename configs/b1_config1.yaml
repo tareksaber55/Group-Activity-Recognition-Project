@@ -37,5 +37,5 @@ train:
 
 
 experiment:
-  output_dir: /kaggle/working/outputs/b1
+  output_dir: /kaggle/working/b1
   name: model_1_config_1
