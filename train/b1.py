@@ -2,8 +2,8 @@ import yaml
 from scripts.train import train 
 from scripts.eval import evaluate
 from scripts.test_report import report
-from utils import dataset
-from models import b1
+from utils.dataset import ImageLevelDataset
+from models.b1 import Baseline1
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -25,7 +25,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 # model
-model = b1.Baseline1().to(device)
+model = Baseline1().to(device)
 
 # optimizer
 optimizer_name = config_dict['train']['optimizer']['type']
@@ -77,9 +77,9 @@ preprocessor = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
-train_dataset = dataset.ImageLevelDataset(input_root,annot_file,categories_dict,train_ids,preprocessor)
-val_dataset = dataset.ImageLevelDataset(input_root,annot_file,categories_dict,val_ids,preprocessor)
-test_dataset = dataset.ImageLevelDataset(input_root,annot_file,categories_dict,test_ids,preprocessor)
+train_dataset = ImageLevelDataset(input_root,annot_file,categories_dict,train_ids,preprocessor)
+val_dataset = ImageLevelDataset(input_root,annot_file,categories_dict,val_ids,preprocessor)
+test_dataset = ImageLevelDataset(input_root,annot_file,categories_dict,test_ids,preprocessor)
 
 train_loader = DataLoader(train_dataset,batch_size=config_dict['train']['batch_size']['train'],shuffle=True)
 val_loader = DataLoader(val_dataset,batch_size=config_dict['train']['batch_size']['val'],shuffle=False)
