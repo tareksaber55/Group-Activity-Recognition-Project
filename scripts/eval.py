@@ -11,7 +11,7 @@ def evaluate(model,val_loader,criterion,device):
         correct_labels = 0
         total_labels = 0
         for x_batch,y_batch in val_loader:
-            x_batch, y_batch = x_batch.to(device), y_batch.to(device)
+            x_batch, y_batch = x_batch.to(device,non_blocking=True), y_batch.to(device,non_blocking=True)
             outputs = model(x_batch)
             loss = criterion(outputs,y_batch)
             total_loss += loss.item()

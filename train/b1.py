@@ -81,9 +81,11 @@ train_dataset = ImageLevelDataset(input_root,annot_file,categories_dict,train_id
 val_dataset = ImageLevelDataset(input_root,annot_file,categories_dict,val_ids,preprocessor)
 test_dataset = ImageLevelDataset(input_root,annot_file,categories_dict,test_ids,preprocessor)
 
-train_loader = DataLoader(train_dataset,batch_size=config_dict['train']['batch_size']['train'],shuffle=True)
-val_loader = DataLoader(val_dataset,batch_size=config_dict['train']['batch_size']['val'],shuffle=False)
-test_loader = DataLoader(test_dataset,batch_size=config_dict['train']['batch_size']['val'],shuffle=False)
+num_workers = config_dict['train']['num_workers']
+
+train_loader = DataLoader(train_dataset,batch_size=config_dict['train']['batch_size']['train'],shuffle=True,num_workers=num_workers,pin_memory=True)
+val_loader = DataLoader(val_dataset,batch_size=config_dict['train']['batch_size']['val'],shuffle=False,num_workers=num_workers,pin_memory=True)
+test_loader = DataLoader(test_dataset,batch_size=config_dict['train']['batch_size']['val'],shuffle=False,num_workers=num_workers,pin_memory=True)
 
 # output_path
 output_path = os.path.join(config_dict['experiment']['output_dir'],

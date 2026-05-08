@@ -36,6 +36,8 @@ train:
     train : 32
     val : 64
 
+  num_workers = 4
+  
 
 experiment:
   output_dir: /kaggle/working/b1
