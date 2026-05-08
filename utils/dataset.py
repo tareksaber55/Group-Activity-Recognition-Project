@@ -3,6 +3,8 @@ from torch.utils.data import Dataset
 import pickle
 from PIL import Image
 from utils import boxinfo
+import sys
+sys.modules['boxinfo'] = boxinfo  # make pickle find it as 'boxinfo'
 
 class ImageLevelDataset(Dataset):
     def __init__(self, input_root, annot_pkl_path, categories_dict, videos_ids, preprocess):
