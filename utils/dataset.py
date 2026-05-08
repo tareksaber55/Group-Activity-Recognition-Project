@@ -2,6 +2,7 @@ import os
 from torch.utils.data import Dataset
 import pickle
 from PIL import Image
+from utils.boxinfo import BoxInfo
 
 class ImageLevelDataset(Dataset):
     def __init__(self, input_root, annot_pkl_path, categories_dict, videos_ids, preprocess):
