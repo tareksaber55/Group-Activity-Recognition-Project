@@ -35,11 +35,11 @@ weight_decay = config_dict['train']['optimizer']['weight_decay']
 if optimizer_name == 'adamw':
     optimizer = optim.AdamW(model.parameters(),
                             lr=lr,
-                            weight_decay=weight_decay)
+                            weight_decay=float(weight_decay))
 else :
     optimizer = optim.SGD(model.parameters(),
                           lr=lr,
-                          weight_decay=weight_decay,
+                          weight_decay=float(weight_decay),
                           momentum=0.9)
 
 # epochs
