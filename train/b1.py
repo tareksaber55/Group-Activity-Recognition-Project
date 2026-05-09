@@ -33,14 +33,18 @@ lr = config_dict['train']['optimizer']['lr']
 weight_decay = config_dict['train']['optimizer']['weight_decay']
 
 if optimizer_name == 'adamw':
-    optimizer = optim.AdamW(model.parameters(),
-                            lr=lr,
-                            weight_decay=float(weight_decay))
+    optimizer = optim.AdamW(
+        filter(lambda p: p.requires_grad, model.parameters()),
+        lr=lr,
+        weight_decay=float(weight_decay)
+    )
 else :
-    optimizer = optim.SGD(model.parameters(),
-                          lr=lr,
-                          weight_decay=float(weight_decay),
-                          momentum=0.9)
+    optimizer = optim.SGD(
+        filter(lambda p: p.requires_grad, model.parameters()),
+        lr=lr,
+        weight_decay=float(weight_decay),
+        momentum=0.9
+    )
 
 # epochs
 epochs = config_dict['train']['epochs']
