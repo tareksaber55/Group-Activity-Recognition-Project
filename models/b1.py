@@ -5,7 +5,7 @@ import torchvision
 import torchvision.models as models
 
 class Baseline1(nn.Module):
-    def __init__(self,fine_tune_all = False):
+    def __init__(self,fine_tune_all = True):
         super(Baseline1,self).__init__()
         self.model = models.resnet50(weights = models.ResNet50_Weights.DEFAULT)
         if not fine_tune_all:
