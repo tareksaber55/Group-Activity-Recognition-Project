@@ -73,17 +73,35 @@ train_ids = config_dict['dataset']['splits']['train']
 val_ids = config_dict['dataset']['splits']['val']
 test_ids = config_dict['dataset']['splits']['test']
 categories_dict = config_dict['dataset']['classes']
-# image has a lot of space around objects. Let's crop around
-preprocessor = transforms.Compose([ 
-    transforms.Resize((256, 256)),
-    transforms.CenterCrop((224, 224)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-    ])
 
-train_dataset = ImageLevelDataset(input_root,annot_file,categories_dict,train_ids,preprocessor,one_frame=True)
-val_dataset = ImageLevelDataset(input_root,annot_file,categories_dict,val_ids,preprocessor,one_frame=True)
-test_dataset = ImageLevelDataset(input_root,annot_file,categories_dict,test_ids,preprocessor,one_frame=True)
+# image has a lot of space around objects. Let's crop around
+train_transform = transforms.Compose([
+    transforms.Resize((224,224)),
+    transforms.RandomHorizontalFlip(),
+    transforms.ColorJitter(
+        brightness=0.2,
+        contrast=0.2,
+        saturation=0.2
+    ),
+    transforms.ToTensor(),
+    transforms.Normalize(
+        mean=[0.485,0.456,0.406],
+        std=[0.229,0.224,0.225]
+    )
+])
+
+val_transform = transforms.Compose([
+    transforms.Resize((224,224)),
+    transforms.ToTensor(),
+    transforms.Normalize(
+        mean=[0.485,0.456,0.406],
+        std=[0.229,0.224,0.225]
+    )
+])
+
+train_dataset = ImageLevelDataset(input_root,annot_file,categories_dict,train_ids,train_transform,one_frame=True)
+val_dataset = ImageLevelDataset(input_root,annot_file,categories_dict,val_ids,val_transform,one_frame=True)
+test_dataset = ImageLevelDataset(input_root,annot_file,categories_dict,test_ids,val_transform,one_frame=True)
 
 num_workers = config_dict['train']['num_workers']
 

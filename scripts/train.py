@@ -11,6 +11,8 @@ def train(model,optimizer,criterion,train_loader,val_loader,epochs,scheduler,dev
     logger = Logger(os.path.join(output_path,'logs.csv'))
     writer = SummaryWriter(log_dir=output_path)
     best_loss = float('inf')
+    checkpoint_dir = os.path.join(output_path,'checkpoints')
+    os.makedirs(checkpoint_dir,exist_ok=True)
     for epoch in range(epochs):
         model.train()
         epoch_loss = 0
@@ -56,8 +58,6 @@ def train(model,optimizer,criterion,train_loader,val_loader,epochs,scheduler,dev
                 'optimizer_state_dict':optimizer.state_dict(),
                 'loss':val_loss
             }
-            checkpoint_dir = os.path.join(output_path,'checkpoints')
-            os.makedirs(checkpoint_dir,exist_ok=True)
             torch.save(checkpoint,os.path.join(checkpoint_dir,'checkpoint.pth'))
         if scheduler:
             writer.add_scalar('Learning Rate',optimizer.param_groups[0]['lr'],epoch)

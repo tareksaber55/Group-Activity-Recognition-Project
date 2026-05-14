@@ -5,13 +5,16 @@ import torchvision
 import torchvision.models as models
 
 class Baseline1(nn.Module):
-    def __init__(self):
+    def __init__(self,fine_tune_all = False):
         super(Baseline1,self).__init__()
         self.model = models.resnet50(weights = models.ResNet50_Weights.DEFAULT)
-        for param in self.model.parameters():
-            param.requires_grad = False
+        if not fine_tune_all:
+            for param in self.model.parameters():
+                param.requires_grad = False
+
+        in_features = self.model.fc.in_features
         self.model.fc = nn.Sequential(
-            nn.Linear(2048,512),
+            nn.Linear(in_features,512),
             nn.ReLU(),
             nn.Dropout(0.2),
             nn.Linear(512,8)
