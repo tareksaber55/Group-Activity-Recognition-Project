@@ -22,7 +22,7 @@ dataset:
 train:
   optimizer:
     type: adamw
-    lr: 0.001
+    lr: 0.01
     weight_decay: 1e-5
 
   epochs: 20
