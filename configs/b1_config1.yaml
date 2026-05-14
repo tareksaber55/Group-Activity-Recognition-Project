@@ -36,7 +36,7 @@ train:
     train : 32
     val : 64
 
-  num_workers = 4
+  num_workers : 4
   
 
 experiment:
