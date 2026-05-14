@@ -28,7 +28,7 @@ class report:
         # confusion matrix
         cm = confusion_matrix(self.all_labels,self.all_preds)
         cm_precent = cm.astype('float') / cm.sum(axis=1,keepdims=True)
-        sns.heatmap(cm_precent,annot=True,fmt='.2f',xticklabels=labels,yticklabels=labels)
+        sns.heatmap(cm_precent,annot=True,fmt='.2f',xticklabels=labels,yticklabels=labels,cmap='blues')
         plt.xlabel("Predicted")
         plt.ylabel("True")
         plt.title("Confusion Matrix")
