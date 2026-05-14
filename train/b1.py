@@ -81,9 +81,9 @@ preprocessor = transforms.Compose([
     transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
     ])
 
-train_dataset = ImageLevelDataset(input_root,annot_file,categories_dict,train_ids,preprocessor)
-val_dataset = ImageLevelDataset(input_root,annot_file,categories_dict,val_ids,preprocessor)
-test_dataset = ImageLevelDataset(input_root,annot_file,categories_dict,test_ids,preprocessor)
+train_dataset = ImageLevelDataset(input_root,annot_file,categories_dict,train_ids,preprocessor,one_frame=True)
+val_dataset = ImageLevelDataset(input_root,annot_file,categories_dict,val_ids,preprocessor,one_frame=True)
+test_dataset = ImageLevelDataset(input_root,annot_file,categories_dict,test_ids,preprocessor,one_frame=True)
 
 num_workers = config_dict['train']['num_workers']
 
