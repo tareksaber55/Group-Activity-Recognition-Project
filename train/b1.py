@@ -75,27 +75,33 @@ test_ids = config_dict['dataset']['splits']['test']
 categories_dict = config_dict['dataset']['classes']
 
 # image has a lot of space around objects. Let's crop around
+# Do NOT use RandomHorizontalFlip , classes contain direction : l-pass , r-pass
+
 train_transform = transforms.Compose([
-    transforms.Resize((224,224)),
-    transforms.RandomHorizontalFlip(),
-    transforms.ColorJitter(
-        brightness=0.2,
-        contrast=0.2,
-        saturation=0.2
+    transforms.Resize(256),
+    transforms.RandomResizedCrop(
+        224,
+        scale=(0.8, 1.0),
+        ratio=(0.9, 1.1)
     ),
+
+    transforms.GaussianBlur(kernel_size=3, sigma=(0.1, 2.0)),
+    
     transforms.ToTensor(),
+
     transforms.Normalize(
-        mean=[0.485,0.456,0.406],
-        std=[0.229,0.224,0.225]
+        mean=[0.485, 0.456, 0.406],
+        std=[0.229, 0.224, 0.225]
     )
 ])
 
 val_transform = transforms.Compose([
-    transforms.Resize((224,224)),
+    transforms.Resize(256),
+    transforms.CenterCrop(224),
     transforms.ToTensor(),
     transforms.Normalize(
-        mean=[0.485,0.456,0.406],
-        std=[0.229,0.224,0.225]
+        mean=[0.485, 0.456, 0.406],
+        std=[0.229, 0.224, 0.225]
     )
 ])
 
