@@ -4,16 +4,24 @@ import pickle
 from PIL import Image
 from utils import boxinfo
 import sys
+import torch
 sys.modules['boxinfo'] = boxinfo  # make pickle find it as 'boxinfo'
-
 class ImageLevelDataset(Dataset):
-    def __init__(self, input_root, annot_pkl_path, categories_dict, videos_ids, preprocess):
+    def __init__(
+        self,
+        input_root,
+        annot_pkl_path,
+        categories_dict,
+        videos_ids,
+        preprocess,
+        one_frame=True
+    ):
         self.preprocess = preprocess
+        self.one_frame = one_frame
 
         with open(annot_pkl_path, 'rb') as file:
             videos_annot = pickle.load(file)
 
-        # this make the search O(1)
         videos_ids_set = set(videos_ids)
 
         self.samples = []
@@ -27,13 +35,36 @@ class ImageLevelDataset(Dataset):
 
                 category = categories_dict[clip_dict['category']]
 
-                for frame_id in clip_dict['frame_boxes_dct']:
+                if one_frame:
+                    frame_id = list(clip_dict['frame_boxes_dct'].keys())[4]
+
                     input_image_path = os.path.join(
-                        input_root, video, clip, f'{frame_id}.jpg'
+                        input_root,
+                        video,
+                        clip,
+                        f'{frame_id}.jpg'
                     )
 
                     self.samples.append({
                         'input_image_path': input_image_path,
+                        'category': category
+                    })
+
+                else:
+                    frames = []
+
+                    for frame_id in clip_dict['frame_boxes_dct']:
+                        input_image_path = os.path.join(
+                            input_root,
+                            video,
+                            clip,
+                            f'{frame_id}.jpg'
+                        )
+
+                        frames.append(input_image_path)
+
+                    self.samples.append({
+                        'input_sequence_path': frames,
                         'category': category
                     })
 
@@ -42,13 +73,33 @@ class ImageLevelDataset(Dataset):
 
     def __getitem__(self, index):
         sample = self.samples[index]
-
-        image = Image.open(sample['input_image_path']).convert('RGB')
-        image = self.preprocess(image)
-
         category = sample['category']
 
-        return image, category
+        if self.one_frame:
+            image_path = sample['input_image_path']
+
+            image = Image.open(image_path).convert('RGB')
+
+            if self.preprocess:
+                image = self.preprocess(image)
+
+            return image, category
+
+        else:
+            images = []
+
+            for frame_path in sample['input_sequence_path']:
+                image = Image.open(frame_path).convert('RGB')
+
+                if self.preprocess:
+                    image = self.preprocess(image)
+
+                images.append(image)
+
+            images = torch.stack(images)
+
+            return images, category
+        
 
 
                     
