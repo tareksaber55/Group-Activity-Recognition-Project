@@ -32,7 +32,7 @@ class report:
         plt.ylabel("True")
         plt.title("Confusion Matrix")
 
-        plt.savefig(os.path.join(output_path,'confusion_matrix.png'),dpi=500)
+        plt.savefig(os.path.join(output_path,'confusion_matrix.png'),dpi=600)
 
         # classification report + f1_score
         cr = classification_report(
