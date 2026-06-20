@@ -38,7 +38,7 @@ class ImageLevelDataset(Dataset):
                 if one_frame:
                     frame_id = list(clip_dict['frame_boxes_dct'].keys())[4]
 
-                    input_image_path = os.path.join(
+                    image_path = os.path.join(
                         input_root,
                         video,
                         clip,
@@ -46,7 +46,7 @@ class ImageLevelDataset(Dataset):
                     )
 
                     self.samples.append({
-                        'input_image_path': input_image_path,
+                        'image_path': image_path,
                         'category': category
                     })
 
@@ -54,17 +54,17 @@ class ImageLevelDataset(Dataset):
                     frames = []
 
                     for frame_id in clip_dict['frame_boxes_dct']:
-                        input_image_path = os.path.join(
+                        image_path = os.path.join(
                             input_root,
                             video,
                             clip,
                             f'{frame_id}.jpg'
                         )
 
-                        frames.append(input_image_path)
+                        frames.append(image_path)
 
                     self.samples.append({
-                        'input_sequence_path': frames,
+                        'sequence_path': frames,
                         'category': category
                     })
 
@@ -76,7 +76,7 @@ class ImageLevelDataset(Dataset):
         category = sample['category']
 
         if self.one_frame:
-            image_path = sample['input_image_path']
+            image_path = sample['image_path']
 
             image = Image.open(image_path).convert('RGB')
 
@@ -88,7 +88,7 @@ class ImageLevelDataset(Dataset):
         else:
             images = []
 
-            for frame_path in sample['input_sequence_path']:
+            for frame_path in sample['sequence_path']:
                 image = Image.open(frame_path).convert('RGB')
 
                 if self.preprocess:
@@ -104,7 +104,71 @@ class ImageLevelDataset(Dataset):
 
                     
 class PersonLevelDataset(Dataset):
-    pass
+    def __init__(
+        self,
+        input_root,
+        annot_pkl_path,
+        categories_dict,
+        videos_ids,
+        preprocess,
+        one_frame = True
+    ):
+        self.preprocess = preprocess
+        self.one_frame = one_frame
+        with open(annot_pkl_path,'rb') as file:
+            videos_annot = pickle.load(file)
+        videos_ids_set = set(videos_ids) # Set make search O(1)
+        self.samples = []
+
+        for video in videos_annot:
+            if video not in videos_ids_set:
+                continue
+            for clip in videos_annot[video]:
+                clip_dict = videos_annot[video][clip]
+                if one_frame:
+                    frame_id = list(clip_dict['frame_boxes_dct'].keys())[4]
+                    frame_path = os.path.join(input_root,video,clip,f'{frame_id}.jpg')
+                    self.samples.append({'image_path':frame_path,
+                                        'frame_boxes':clip_dict['frame_boxes_dct'][frame_id]})
+                else:
+                    frames_path = []
+                    frames_boxes = []
+                    for frame_id in clip_dict['frame_boxes_dct']:
+                        frame_path = os.path.join(input_root,video,clip,f'{frame_id}.jpg')
+                        frame_boxes = clip_dict['frame_boxes_dct'][frame_id]
+                        frames_path.append(frame_path)
+                        frames_boxes.append(frame_boxes)
+                    self.samples.append({'frames_path':frames_path,
+                                        'frames_boxes':frames_boxes})
+    
+    def __len__(self):
+        return len(self.samples)
+    
+    def __getitem__(self, index):
+        sample = self.samples[index]
+        if self.one_frame:
+            image = Image.open(sample['image_path']).convert('RGB')
+            preprocessed_images = []
+            categories = []
+            for box_info in sample['frame_boxes']:
+                x1, y1, x2, y2 = box_info.box
+                cropped_image = image.crop((x1,y1,x2,y2))
+                preprocessed_images.append(self.preprocess(cropped_image))
+                categories.append(box_info.category)
+            preprocessed_images = torch.stack(preprocessed_images)
+            return preprocessed_images , categories
+        else:
+            pass
+
+
+
+            
+
+
+
+
+
+
 
 
 
