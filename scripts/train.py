@@ -40,7 +40,7 @@ def train(model,optimizer,criterion,train_loader,val_loader,epochs,scheduler,dev
         train_f1score = f1_score(all_labels,all_preds,average='macro')
         val_loss , val_accuracy , val_f1score,_,_ = evaluate(model,val_loader,criterion,device)
         logger.write(
-            epoch,
+            epoch+1,
             epoch_loss,val_loss,
             train_accuracy,val_accuracy,
             train_f1score,val_f1score,
