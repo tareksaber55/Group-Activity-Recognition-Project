@@ -158,9 +158,21 @@ class PersonLevelDataset(Dataset):
             preprocessed_images = torch.stack(preprocessed_images)
             return preprocessed_images , categories
         else:
-            pass
-
-
+            all_frames_images = []
+            all_frames_categories = []
+            for frame_path,frame_boxes in zip(sample['frames_path'],sample['frames_boxes']):
+                image = Image.open(frame_path).convert('RGB')
+                preprocessed_images = []
+                categories = []
+                for box_info in frame_boxes:
+                    x1, y1, x2, y2 = box_info.box
+                    cropped_image = image.crop((x1,y1,x2,y2))
+                    preprocessed_images.append(self.preprocess(cropped_image))
+                    categories.append(box_info.category)
+                preprocessed_images = torch.stack(preprocessed_images)
+                all_frames_images.append(preprocessed_images)
+                all_frames_categories.append(categories)
+            return all_frames_images,all_frames_categories
 
             
 
