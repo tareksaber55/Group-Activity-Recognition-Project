@@ -154,7 +154,7 @@ class PersonLevelDataset(Dataset):
                 x1, y1, x2, y2 = box_info.box
                 cropped_image = image.crop((x1,y1,x2,y2))
                 preprocessed_images.append(self.preprocess(cropped_image))
-                categories.append(box_info.category)
+                categories.append(self.categories_dict[box_info.category])
             preprocessed_images = torch.stack(preprocessed_images)
             return preprocessed_images , categories
         else:
@@ -168,10 +168,11 @@ class PersonLevelDataset(Dataset):
                     x1, y1, x2, y2 = box_info.box
                     cropped_image = image.crop((x1,y1,x2,y2))
                     preprocessed_images.append(self.preprocess(cropped_image))
-                    categories.append(box_info.category)
+                    categories.append(self.categories_dict[box_info.category])
                 preprocessed_images = torch.stack(preprocessed_images)
                 all_frames_images.append(preprocessed_images)
                 all_frames_categories.append(categories)
+            # should Do Padding and Packing first (Coming)
             return all_frames_images,all_frames_categories
 
             
