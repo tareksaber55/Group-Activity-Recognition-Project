@@ -200,15 +200,15 @@ def temp():
         'r_winpoint': 7
     }
     player_labels = {
-            0:'waiting', 
-            1:'setting', 
-            2:'digging', 
-            3:'falling', 
-            4:'spiking', 
-            5:'blocking',
-            6:'jumping', 
-            7:'moving', 
-            8:'standing'
+        'waiting':0, 
+        'setting':1, 
+        'digging':2, 
+        'falling':3, 
+        'spiking':4, 
+        'blocking':5,
+        'jumping':6, 
+        'moving':7, 
+        'standing':8
         }
 
     # - Train Videos: 1 3 6 7 10 13 15 16 18 22 23 31 32 36 38 39 40 41 42 48 50 52 53 54
