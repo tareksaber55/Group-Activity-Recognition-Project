@@ -103,7 +103,7 @@ class ImageLevelDataset(Dataset):
 
 
                     
-class PersonLevelDataset(Dataset):
+class PlayerLevelDataset(Dataset):
     def __init__(
         self,
         input_root,
