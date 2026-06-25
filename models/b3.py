@@ -7,7 +7,7 @@ import torchvision.models as models
 
 
 class PlayerClassifier(nn.Module):
-    def __init__(self,fine_tune_all = True,num_player_actions = 8):
+    def __init__(self,fine_tune_all = True,num_classes = 8):
         super(PlayerClassifier,self).__init__()
         self.model = models.resnet50(weights = models.ResNet50_Weights.DEFAULT)
         if not fine_tune_all:
@@ -22,7 +22,7 @@ class PlayerClassifier(nn.Module):
             nn.Linear(1024,512),
             nn.ReLU(),
             nn.Dropout(0.3),
-            nn.Linear(512,num_player_actions)
+            nn.Linear(512,num_classes)
         )
     def forward(self,x):
         # batch , frames , persons , channels , width , height
