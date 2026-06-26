@@ -157,7 +157,7 @@ class PlayerLevelDataset(Dataset):
                 preprocessed_images.append(self.preprocess(cropped_image))
                 categories.append(self.categories_dict[box_info.category])
             preprocessed_images = torch.stack(preprocessed_images)
-            return preprocessed_images , categories
+            return preprocessed_images , torch.tensor(categories,dtype=torch.long)
         else:
             all_frames_images = []
             all_frames_categories = []
@@ -174,6 +174,7 @@ class PlayerLevelDataset(Dataset):
                 all_frames_images.append(preprocessed_images)
                 all_frames_categories.append(categories)
             # should Do Padding and Packing first (Coming)
+            # should convert first all_frames_categories to tensor (Coming)
             return all_frames_images,all_frames_categories
 
             
