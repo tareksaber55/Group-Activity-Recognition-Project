@@ -61,7 +61,7 @@ else:
     scheduler = None
 
 # criterion
-criterion = nn.CrossEntropyLoss()
+criterion = nn.CrossEntropyLoss(ignore_index=-1)
 
 
 
