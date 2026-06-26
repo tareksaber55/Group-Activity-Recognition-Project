@@ -111,8 +111,10 @@ class PlayerLevelDataset(Dataset):
         categories_dict,
         videos_ids,
         preprocess,
+        max_players = 12,
         one_frame = True
     ):
+        self.max_players = max_players
         self.categories_dict = categories_dict
         self.preprocess = preprocess
         self.one_frame = one_frame
@@ -156,8 +158,24 @@ class PlayerLevelDataset(Dataset):
                 cropped_image = image.crop((x1,y1,x2,y2))
                 preprocessed_images.append(self.preprocess(cropped_image))
                 categories.append(self.categories_dict[box_info.category])
+            num_players = len(preprocessed_images)
             preprocessed_images = torch.stack(preprocessed_images)
-            return preprocessed_images , torch.tensor(categories,dtype=torch.long)
+            categories = torch.tensor(categories,dtype=torch.long)
+            if num_players < self.max_players:
+                pad_count = self.max_players - num_players
+                C,H,W = preprocessed_images.shape[1:]
+                image_paading = torch.zeros(pad_count,C,H,W)
+                preprocessed_images = torch.cat(
+                    [preprocessed_images,image_paading],dim=0
+                )
+                label_padding = torch.full((pad_count,),-1,dtype=torch.long)
+                categories = torch.cat(
+                    [categories,label_padding],dim=0
+                )
+            elif num_players > self.max_players:
+                preprocessed_images = preprocessed_images[:self.max_players]
+                categories = categories[:self.max_players]
+            return preprocessed_images , categories
         else:
             all_frames_images = []
             all_frames_categories = []

@@ -27,8 +27,8 @@ class PlayerClassifier(nn.Module):
     def forward(self,x):
         # batch , frames , persons , channels , width , height
         # but resnet expects 3d (channels,width,height)
-        B,F,P,C,W,H = x.shape
-        x = x.view(B*F*P,C,W,H)
+        B,F,P,C,H,W = x.shape
+        x = x.view(B*F*P,C,H,W)
         out = self.model(x)
         out = out.view(B, F, P, -1)
         return out
