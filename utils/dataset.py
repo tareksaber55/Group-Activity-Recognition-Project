@@ -113,6 +113,7 @@ class PlayerLevelDataset(Dataset):
         preprocess,
         one_frame = True
     ):
+        self.categories_dict = categories_dict
         self.preprocess = preprocess
         self.one_frame = one_frame
         with open(annot_pkl_path,'rb') as file:
