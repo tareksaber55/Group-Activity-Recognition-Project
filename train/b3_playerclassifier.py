@@ -3,7 +3,7 @@ from scripts.train import train
 from scripts.eval import evaluate
 from scripts.test_report import report
 from utils.dataset import PlayerLevelDataset
-from models.b3 import PlayerClassifier
+from models.b3 import B3PlayerClassifier
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -25,7 +25,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 # model
-model = PlayerClassifier(num_classes=len(config_dict['dataset']['classes'])).to(device)
+model = B3PlayerClassifier(num_classes=len(config_dict['dataset']['classes'])).to(device)
 
 # optimizer
 optimizer_name = config_dict['train']['optimizer']['type']
