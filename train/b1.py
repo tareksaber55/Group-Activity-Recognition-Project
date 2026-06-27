@@ -1,6 +1,6 @@
 import yaml
-from scripts.train import train 
-from scripts.eval import evaluate
+from scripts.B1.b1_train import train 
+from scripts.B1.b1_eval import evaluate
 from scripts.test_report import report
 from utils.dataset import ImageLevelDataset
 from models.b1 import Baseline1

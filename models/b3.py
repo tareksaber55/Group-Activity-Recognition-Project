@@ -7,7 +7,7 @@ import torchvision.models as models
 
 
 class B3PlayerClassifier(nn.Module):
-    def __init__(self,fine_tune_all = True,num_classes = 8):
+    def __init__(self,fine_tune_all = True,num_classes = 9):
         super(B3PlayerClassifier,self).__init__()
         self.model = models.resnet50(weights = models.ResNet50_Weights.DEFAULT)
         if not fine_tune_all:

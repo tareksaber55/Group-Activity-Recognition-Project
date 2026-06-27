@@ -24,7 +24,7 @@ def evaluate(model, val_loader, criterion, device):
             loss = criterion(logits, targets)
             total_loss += loss.item()
 
-            predicted = torch.argmax(outputs, dim=-1) 
+            _,predicted = torch.max(outputs, dim=-1) 
 
             mask = (y_batch != -1)
 
