@@ -21,7 +21,7 @@ class B3PlayerClassifier(nn.Module):
             nn.Dropout(0.3),
             nn.Linear(1024,512),
             nn.ReLU(),
-            nn.Dropout(0.5),
+            nn.Dropout(0.3),
             nn.Linear(512,num_classes)
         )
     def forward(self,x):
