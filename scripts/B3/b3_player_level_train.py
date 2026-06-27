@@ -25,10 +25,6 @@ def train(model,optimizer,criterion,train_loader,val_loader,epochs,scheduler,dev
             outputs = model(x_batch)
             logits = outputs.reshape(-1,outputs.shape[-1])
             targets = y_batch.reshape(-1)
-            print(outputs.shape)
-            print(y_batch.shape)
-            print(logits.shape)
-            print(targets.shape)
             loss = criterion(logits,targets)
 
             optimizer.zero_grad()
