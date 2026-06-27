@@ -21,59 +21,63 @@ def train(model,optimizer,criterion,train_loader,val_loader,epochs,scheduler,dev
         all_labels , all_preds = [] , []
         for x_batch,y_batch in train_loader:
             x_batch,y_batch = x_batch.to(device,non_blocking=True),y_batch.to(device,non_blocking=True)
+
             outputs = model(x_batch)
             logits = outputs.reshape(-1,outputs.shape[-1])
             targets = y_batch.reshape(-1)
-            
-            loss = criterion(logits,targets)
+            print(outputs.shape)
+            print(y_batch.shape)
+            print(logits.shape)
+            print(targets.shape)
+    #         loss = criterion(logits,targets)
 
-            optimizer.zero_grad()
-            loss.backward()
-            optimizer.step()
-            epoch_loss += loss.item()
-            _,predicted = torch.max(outputs,dim=-1)
-            mask = (y_batch != -1)
+    #         optimizer.zero_grad()
+    #         loss.backward()
+    #         optimizer.step()
+    #         epoch_loss += loss.item()
+    #         _,predicted = torch.max(outputs,dim=-1)
+    #         mask = (y_batch != -1)
 
-            total_labels += mask.sum().item()
-            correct_labels += ((predicted == y_batch) & mask ).sum().item()
+    #         total_labels += mask.sum().item()
+    #         correct_labels += ((predicted == y_batch) & mask ).sum().item()
 
-            valid_labels = y_batch[mask]
-            valid_preds = predicted[mask]
+    #         valid_labels = y_batch[mask]
+    #         valid_preds = predicted[mask]
 
-            all_labels.extend(valid_labels.cpu().numpy())
-            all_preds.extend(valid_preds.cpu().numpy())
+    #         all_labels.extend(valid_labels.cpu().numpy())
+    #         all_preds.extend(valid_preds.cpu().numpy())
 
-        epoch_loss /= len(train_loader)
-        train_accuracy = (correct_labels * 100) / total_labels
-        train_f1score = f1_score(all_labels,all_preds,average='macro')
-        val_loss , val_accuracy , val_f1score,_,_ = evaluate(model,val_loader,criterion,device)
-        logger.write(
-            epoch+1,
-            epoch_loss,val_loss,
-            train_accuracy,val_accuracy,
-            train_f1score,val_f1score,
-            optimizer.param_groups[0]['lr']
-        )
-        writer.add_scalar('Val Loss',val_loss,epoch)
-        writer.add_scalar('Val Accuracy',val_accuracy,epoch)
-        writer.add_scalar('Train Loss',epoch_loss,epoch)
-        writer.add_scalar('Train Accuracy',train_accuracy,epoch)
-        if val_loss < best_loss:
-            best_loss = val_loss
-            checkpoint = {
-                'epoch':epoch,
-                'model_state_dict':model.state_dict(),
-                'optimizer_state_dict':optimizer.state_dict(),
-                'loss':val_loss
-            }
-            torch.save(checkpoint,os.path.join(checkpoint_dir,'checkpoint.pth'))
-        if scheduler:
-            writer.add_scalar('Learning Rate',optimizer.param_groups[0]['lr'],epoch)
-            if isinstance(scheduler , optim.lr_scheduler.ReduceLROnPlateau):
-                scheduler.step(val_loss)
-            else:
-                scheduler.step()
-        print(f"epoch {epoch} | train loss {epoch_loss:.4f} | val loss {val_loss:.4f} | val acc {val_accuracy:.2f} | val f1 {val_f1score:.4f}")
-    writer.close()
+    #     epoch_loss /= len(train_loader)
+    #     train_accuracy = (correct_labels * 100) / total_labels
+    #     train_f1score = f1_score(all_labels,all_preds,average='macro')
+    #     val_loss , val_accuracy , val_f1score,_,_ = evaluate(model,val_loader,criterion,device)
+    #     logger.write(
+    #         epoch+1,
+    #         epoch_loss,val_loss,
+    #         train_accuracy,val_accuracy,
+    #         train_f1score,val_f1score,
+    #         optimizer.param_groups[0]['lr']
+    #     )
+    #     writer.add_scalar('Val Loss',val_loss,epoch)
+    #     writer.add_scalar('Val Accuracy',val_accuracy,epoch)
+    #     writer.add_scalar('Train Loss',epoch_loss,epoch)
+    #     writer.add_scalar('Train Accuracy',train_accuracy,epoch)
+    #     if val_loss < best_loss:
+    #         best_loss = val_loss
+    #         checkpoint = {
+    #             'epoch':epoch,
+    #             'model_state_dict':model.state_dict(),
+    #             'optimizer_state_dict':optimizer.state_dict(),
+    #             'loss':val_loss
+    #         }
+    #         torch.save(checkpoint,os.path.join(checkpoint_dir,'checkpoint.pth'))
+    #     if scheduler:
+    #         writer.add_scalar('Learning Rate',optimizer.param_groups[0]['lr'],epoch)
+    #         if isinstance(scheduler , optim.lr_scheduler.ReduceLROnPlateau):
+    #             scheduler.step(val_loss)
+    #         else:
+    #             scheduler.step()
+    #     print(f"epoch {epoch} | train loss {epoch_loss:.4f} | val loss {val_loss:.4f} | val acc {val_accuracy:.2f} | val f1 {val_f1score:.4f}")
+    # writer.close()
 
         
