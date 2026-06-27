@@ -33,3 +33,17 @@ class B3PlayerClassifier(nn.Module):
         out = out.view(B, P, -1)
         return out
     
+class B3GroupClassifier(nn.Module):
+    def __init__(self,backbone ,num_classes = 8):
+        super(B3GroupClassifier,self).__init__()
+        self.backbone = backbone
+        self.backbone = nn.Sequential(*list(backbone.children())[:-1])
+        for param in self.backbone.parameters():
+            param.requires_grad = False
+        self.classifier = nn.Sequential(
+            nn.Linear(2048,512),
+            nn.ReLU(),
+            nn.Dropout(0.5),
+            nn.Linear(512,num_classes)
+        )
+        

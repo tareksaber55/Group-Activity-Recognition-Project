@@ -1,0 +1,28 @@
+
+        ================ Classification Report ================
+
+                      precision    recall  f1-score   support
+
+     waiting       0.67      0.22      0.33      1040
+     setting       0.52      0.52      0.52       372
+     digging       0.36      0.04      0.08       659
+     falling       0.83      0.44      0.57       377
+     spiking       0.77      0.28      0.41       372
+    blocking       0.83      0.75      0.79       855
+     jumping       0.00      0.00      0.00        88
+      moving       0.73      0.28      0.41      1352
+    standing       0.77      0.96      0.86     10819
+
+    accuracy                           0.76     15934
+   macro avg       0.61      0.39      0.44     15934
+weighted avg       0.74      0.76      0.72     15934
+
+
+        ================ Global Metrics =======================
+
+        Accuracy     : 0.7633
+        F1 Macro     : 0.4407
+        F1 Weighted  : 0.7185
+
+        =======================================================
+        
