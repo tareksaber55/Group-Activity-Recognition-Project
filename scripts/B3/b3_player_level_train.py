@@ -3,7 +3,7 @@ import torch.optim as optim
 import torch.nn as nn
 from utils.logger import Logger
 import os
-from scripts.B1.b1_eval import evaluate
+from scripts.B3.b3_player_level_eval import evaluate
 from sklearn.metrics import f1_score
 from torch.utils.tensorboard import SummaryWriter
 
