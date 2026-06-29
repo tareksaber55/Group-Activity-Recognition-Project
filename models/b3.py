@@ -46,4 +46,13 @@ class B3GroupClassifier(nn.Module):
             nn.Dropout(0.5),
             nn.Linear(512,num_classes)
         )
-        
+    def forward(self,x):
+        B,P,C,H,W = x.shape
+        x = x.view(B*P,C,H,W)
+        out = self.backbone(x)
+        out = out.view(B, P, -1)
+        out,_ = torch.max(out,dim=1)
+        out = self.classifier(out)
+        return out
+
+
