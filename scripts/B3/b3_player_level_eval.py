@@ -12,7 +12,7 @@ def evaluate(model, val_loader, criterion, device):
     total_labels = 0
 
     with torch.no_grad():
-        for x_batch, y_batch, _ in val_loader:
+        for x_batch, y_batch in val_loader:
             x_batch = x_batch.to(device, non_blocking=True)
             y_batch = y_batch.to(device, non_blocking=True)
 
