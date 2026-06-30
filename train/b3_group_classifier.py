@@ -11,10 +11,12 @@ from torchvision import transforms
 from torch.utils.data import DataLoader
 import os
 import shutil
+import pickle
 
 
 # select config path
 config_path = 'configs/b3_group_classifier_config1.yaml'
+backbone_path = 'outputs\b3\playerclassifier\model_1_config_1\checkpoints\checkpoint.pth'
 
 with open(config_path,'r') as f:
     config_dict = yaml.safe_load(f)
@@ -23,9 +25,12 @@ with open(config_path,'r') as f:
 # device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
+# backbone
+with open(backbone_path,'r') as f:
+    backbone =  pickle.load(f)
 
 # model
-model = B3GroupClassifier(num_classes=len(config_dict['dataset']['classes'])).to(device)
+model = B3GroupClassifier(backbone=backbone,num_classes=len(config_dict['dataset']['classes'])).to(device)
 
 # optimizer
 optimizer_name = config_dict['train']['optimizer']['type']
