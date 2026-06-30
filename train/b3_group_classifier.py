@@ -1,6 +1,6 @@
 import yaml
-from scripts.B3.b3_player_level_train import train 
-from scripts.B3.b3_player_level_eval import evaluate
+from scripts.B3.b3_group_level_train import train 
+from scripts.B3.b3_group_level_eval import evaluate
 from scripts.test_report import report
 from utils.dataset import PlayerGroupDataset
 from models.b3 import B3GroupClassifier
