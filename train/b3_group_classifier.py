@@ -3,7 +3,7 @@ from scripts.B3.b3_group_level_train import train
 from scripts.B3.b3_group_level_eval import evaluate
 from scripts.test_report import report
 from utils.dataset import PlayerGroupDataset
-from models.b3 import B3GroupClassifier
+from models.b3 import B3GroupClassifier,B3PlayerClassifier
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -16,7 +16,6 @@ import pickle
 
 # select config path
 config_path = 'configs/b3_group_classifier_config1.yaml'
-backbone_path = 'outputs\b3\playerclassifier\model_1_config_1\checkpoints\checkpoint.pth'
 
 with open(config_path,'r') as f:
     config_dict = yaml.safe_load(f)
@@ -26,8 +25,11 @@ with open(config_path,'r') as f:
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # backbone
-with open(backbone_path,'r') as f:
-    backbone =  pickle.load(f)
+with open(config_dict['train']['backbone'],'rb') as f:
+    backbone_dict =  torch.load(f,map_location=device)
+
+backbone = B3PlayerClassifier().to(device)
+backbone.load_state_dict(state_dict=backbone_dict['model_state_dict'])
 
 # model
 model = B3GroupClassifier(backbone=backbone,num_classes=len(config_dict['dataset']['classes'])).to(device)
