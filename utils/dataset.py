@@ -132,7 +132,9 @@ class PlayerLevelDataset(Dataset):
                     frame_id = list(clip_dict['frame_boxes_dct'].keys())[4]
                     frame_path = os.path.join(input_root,video,clip,f'{frame_id}.jpg')
                     self.samples.append({'image_path':frame_path,
-                                        'frame_boxes':clip_dict['frame_boxes_dct'][frame_id]})
+                                        'frame_boxes':clip_dict['frame_boxes_dct'][frame_id],
+                                        'group_activity':clip_dict['category']
+                                        })
                 else:
                     frames_path = []
                     frames_boxes = []
@@ -142,13 +144,16 @@ class PlayerLevelDataset(Dataset):
                         frames_path.append(frame_path)
                         frames_boxes.append(frame_boxes)
                     self.samples.append({'frames_path':frames_path,
-                                        'frames_boxes':frames_boxes})
+                                        'frames_boxes':frames_boxes,
+                                        'group_activity':clip_dict['category']
+                                        })
     
     def __len__(self):
         return len(self.samples)
     
     def __getitem__(self, index):
         sample = self.samples[index]
+        group_activity = sample['group_activity']
         if self.one_frame:
             image = Image.open(sample['image_path']).convert('RGB')
             preprocessed_images = []
@@ -175,7 +180,7 @@ class PlayerLevelDataset(Dataset):
             elif num_players > self.max_players:
                 preprocessed_images = preprocessed_images[:self.max_players]
                 categories = categories[:self.max_players]
-            return preprocessed_images , categories
+            return preprocessed_images , categories , group_activity
         else:
             all_frames_images = []
             all_frames_categories = []
@@ -193,7 +198,7 @@ class PlayerLevelDataset(Dataset):
                 all_frames_categories.append(categories)
             # should Do Padding and Packing first (Coming)
             # should convert first all_frames_categories to tensor (Coming)
-            return all_frames_images,all_frames_categories
+            return all_frames_images,all_frames_categories , group_activity
 
             
 

@@ -19,7 +19,7 @@ def train(model,optimizer,criterion,train_loader,val_loader,epochs,scheduler,dev
         correct_labels = 0
         total_labels = 0
         all_labels , all_preds = [] , []
-        for x_batch,y_batch in train_loader:
+        for x_batch,y_batch,_ in train_loader:
             x_batch,y_batch = x_batch.to(device,non_blocking=True),y_batch.to(device,non_blocking=True)
 
             outputs = model(x_batch)
