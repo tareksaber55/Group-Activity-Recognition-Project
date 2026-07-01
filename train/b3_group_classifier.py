@@ -113,8 +113,8 @@ val_transform = transforms.Compose([
 ])
 
 train_dataset = PlayerGroupDataset(input_root,annot_file,player_dict,group_dict,train_ids,train_transform,one_frame=True)
-val_dataset = PlayerGroupDataset(input_root,annot_file,player_dict,group_dict,train_ids,train_transform,one_frame=True)
-test_dataset = PlayerGroupDataset(input_root,annot_file,player_dict,group_dict,train_ids,train_transform,one_frame=True)
+val_dataset = PlayerGroupDataset(input_root,annot_file,player_dict,group_dict,val_ids,val_transform,one_frame=True)
+test_dataset = PlayerGroupDataset(input_root,annot_file,player_dict,group_dict,test_ids,val_transform,one_frame=True)
 
 num_workers = config_dict['train']['num_workers']
 
