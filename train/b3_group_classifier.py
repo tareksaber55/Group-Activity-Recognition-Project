@@ -134,6 +134,6 @@ checkpoint_dict = torch.load(os.path.join(output_path,'checkpoints','checkpoint.
 model.load_state_dict(checkpoint_dict['model_state_dict'])
 
 _,_,_,all_labels,all_preds =  evaluate(model,test_loader,criterion,device)
-final_report = report(all_labels,all_preds,team_level=False)
+final_report = report(all_labels,all_preds,team_level=True)
 final_report.make_report(output_path)
 
