@@ -4,9 +4,9 @@ import torch.nn as nn
 import torchvision
 import torchvision.models as models
 
-class Baseline1(nn.Module):
+class Baseline4(nn.Module):
     def __init__(self,fine_tune_all = True):
-        super(Baseline1,self).__init__()
+        super(Baseline4,self).__init__()
         self.cnn = models.resnet50(weights = models.ResNet50_Weights.DEFAULT)
         in_features = self.cnn.fc.in_features
         self.cnn = nn.Sequential(*list(self.cnn.children())[:-1])
@@ -21,5 +21,5 @@ class Baseline1(nn.Module):
             nn.Linear(512,8)
         )
     def forward(self,x):
-        return self.model(x)
+        pass
     
