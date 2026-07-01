@@ -13,7 +13,10 @@ class Baseline4(nn.Module):
         if not fine_tune_all:
             for param in self.cnn.parameters():
                 param.requires_grad = False
-        self.lstm = nn.LSTM(input_size=in_features,hidden_size=1024,num_layers=1,batch_first=True)
+        self.lstm = nn.LSTM(input_size=in_features,
+                            hidden_size=1024,
+                            num_layers=1,
+                            batch_first=True)
         self.classifier = nn.Sequential(
             nn.Linear(1024,512),
             nn.ReLU(),
@@ -21,5 +24,19 @@ class Baseline4(nn.Module):
             nn.Linear(512,8)
         )
     def forward(self,x):
-        pass
+        B,F,C,H,W = x.shape
+        x = x.view(B*F,C,H,W)
+        x = self.cnn(x)
+        x = x.view(B,F,-1)
+        x , _ = self.lstm(x)
+        x = x[:,-1,:]
+        x = self.classifier(x)
+        return x
     
+# Input → (B, F, C, H, W)
+# Flatten frames → (B*F, C, H, W)
+# CNN features → (B*F, 2048, 1, 1)
+# Reshape sequence → (B, F, 2048)
+# LSTM output → (B, F, hidden_size)
+# Take last timestep → (B, hidden_size)
+# Classifier → (B, 8)
