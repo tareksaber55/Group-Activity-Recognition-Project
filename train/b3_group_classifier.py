@@ -11,7 +11,6 @@ from torchvision import transforms
 from torch.utils.data import DataLoader
 import os
 import shutil
-import pickle
 
 
 # select config path
