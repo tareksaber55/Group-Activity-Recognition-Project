@@ -31,7 +31,7 @@ backbone = B3PlayerClassifier().to(device)
 backbone.load_state_dict(state_dict=backbone_dict['model_state_dict'])
 
 # model
-model = B3GroupClassifier(backbone=backbone,num_classes=len(config_dict['dataset']['classes'])).to(device)
+model = B3GroupClassifier(backbone=backbone,num_classes=len(config_dict['dataset']['group_classes'])).to(device)
 
 # optimizer
 optimizer_name = config_dict['train']['optimizer']['type']
