@@ -37,12 +37,11 @@ class B3GroupClassifier(nn.Module):
     def __init__(self,backbone ,num_classes = 8):
         super(B3GroupClassifier,self).__init__()
         self.backbone = backbone
-        in_features = self.backbone.model.fc.in_features
         self.backbone = nn.Sequential(*list(backbone.model.children())[:-1])
         for param in self.backbone.parameters():
             param.requires_grad = False
         self.classifier = nn.Sequential(
-            nn.Linear(in_features,512),
+            nn.Linear(2048,512),
             nn.ReLU(),
             nn.Dropout(0.5),
             nn.Linear(512,num_classes)
