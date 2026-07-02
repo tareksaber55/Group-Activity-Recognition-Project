@@ -14,7 +14,7 @@ import shutil
 
 
 # select config path
-config_path = 'configs/b3_player_classifier_config1.yaml'
+config_path = 'configs/b3_player_classifier_config2.yaml'
 
 with open(config_path,'r') as f:
     config_dict = yaml.safe_load(f)
