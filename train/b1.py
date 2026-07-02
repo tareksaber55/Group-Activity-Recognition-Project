@@ -80,7 +80,7 @@ categories_dict = config_dict['dataset']['classes']
 train_transform = transforms.Compose([
     transforms.Resize((256,256)),
     transforms.RandomResizedCrop(
-        224,
+        (224, 224),
         scale=(0.8, 1.0),
         ratio=(0.9, 1.1)
     ),
@@ -97,7 +97,7 @@ train_transform = transforms.Compose([
 
 val_transform = transforms.Compose([
     transforms.Resize((256,256)),
-    transforms.CenterCrop(224),
+    transforms.CenterCrop((224, 224)),
     transforms.ToTensor(),
     transforms.Normalize(
         mean=[0.485, 0.456, 0.406],
