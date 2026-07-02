@@ -78,7 +78,7 @@ categories_dict = config_dict['dataset']['classes']
 # Do NOT use RandomHorizontalFlip , classes contain direction : l-pass , r-pass
 
 train_transform = transforms.Compose([
-    transforms.Resize(256),
+    transforms.Resize((256,256)),
     transforms.RandomResizedCrop(
         224,
         scale=(0.8, 1.0),
@@ -96,7 +96,7 @@ train_transform = transforms.Compose([
 ])
 
 val_transform = transforms.Compose([
-    transforms.Resize(256),
+    transforms.Resize((256,256)),
     transforms.CenterCrop(224),
     transforms.ToTensor(),
     transforms.Normalize(
