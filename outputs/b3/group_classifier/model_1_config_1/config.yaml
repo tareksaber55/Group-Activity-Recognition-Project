@@ -39,7 +39,7 @@ train:
   scheduler:
     type: reduce_on_plateau
     patience : 3
-    factor : 0.5
+    factor : 0.1
 
   batch_size:
     train : 4
@@ -47,7 +47,7 @@ train:
 
   num_workers : 4
 
-  backbone: /kaggle/input/models/tareksaber/b3-player-classifier/pytorch/default/1/checkpoint.pth
+  backbone: /kaggle/input/models/tareksaber/b3-player-classifier-model/pytorch/default/1/checkpoint.pth
 
 experiment:
   output_dir: /kaggle/working/b3/group_classifier
