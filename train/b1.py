@@ -79,13 +79,11 @@ categories_dict = config_dict['dataset']['classes']
 
 train_transform = transforms.Compose([
     transforms.Resize((256,256)),
-    transforms.RandomResizedCrop(
-        (224, 224),
-        scale=(0.8, 1.0),
-        ratio=(0.9, 1.1)
-    ),
+    transforms.RandomCrop((224, 224)),
 
-    transforms.GaussianBlur(kernel_size=3, sigma=(0.1, 2.0)),
+    transforms.RandomApply([
+        transforms.GaussianBlur(kernel_size=3, sigma=(0.1, 1.0))
+    ], p=0.2),
     
     transforms.ToTensor(),
 

@@ -85,12 +85,12 @@ group_dict = config_dict['dataset']['group_classes']
 # Do NOT use RandomHorizontalFlip , classes contain direction : l-pass , r-pass
 
 train_transform = transforms.Compose([
-    transforms.Resize((256,256)),
-    transforms.RandomCrop((224, 224)),
+    transforms.Resize((224,224)),
+
 
     transforms.RandomApply([
         transforms.GaussianBlur(kernel_size=3, sigma=(0.1, 1.0))
-    ], p=0.2),
+        ], p=0.2),
     
     transforms.ToTensor(),
 
@@ -101,8 +101,7 @@ train_transform = transforms.Compose([
 ])
 
 val_transform = transforms.Compose([
-    transforms.Resize((256,256)),
-    transforms.CenterCrop((224, 224)),
+    transforms.Resize((224,224)),
     transforms.ToTensor(),
     transforms.Normalize(
         mean=[0.485, 0.456, 0.406],
