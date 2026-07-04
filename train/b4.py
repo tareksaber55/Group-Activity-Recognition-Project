@@ -25,7 +25,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 # model
-model = Baseline4(fine_tune_all=False,num_classes=len(config_dict['dataset']['classes'])).to(device)
+model = Baseline4(fine_tune_all=True,num_classes=len(config_dict['dataset']['classes'])).to(device)
 
 # optimizer
 optimizer_name = config_dict['train']['optimizer']['type']
