@@ -3,7 +3,7 @@ from scripts.B5.b5_train import train
 from scripts.B5.b5_eval import evaluate
 from scripts.test_report import report
 from utils.dataset import PlayerGroupDataset
-from models.b3 import B3GroupClassifier
+from models.b3 import B3PlayerClassifier
 from models.b5 import Baseline5
 import torch
 import torch.nn as nn
@@ -28,7 +28,7 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 with open(config_dict['train']['backbone'],'rb') as f:
     backbone_dict =  torch.load(f,map_location=device)
 
-backbone = B3GroupClassifier(backbone=None).to(device)
+backbone = B3PlayerClassifier().to(device)
 backbone.load_state_dict(state_dict=backbone_dict['model_state_dict'])
 
 # model

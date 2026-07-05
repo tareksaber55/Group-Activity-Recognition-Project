@@ -47,7 +47,7 @@ train:
 
   num_workers : 4
 
-  backbone: /kaggle/input/models/tareksaber/b3-group-classifier-model/pytorch/default/1/checkpoint.pth
+  backbone: /kaggle/input/models/tareksaber/b3-player-classifier-model/pytorch/default/1/checkpoint.pth
 
 experiment:
   output_dir: /kaggle/working/b5
