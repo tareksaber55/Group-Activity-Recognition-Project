@@ -188,11 +188,28 @@ class PlayerLevelDataset(Dataset):
                     cropped_image = image.crop((x1,y1,x2,y2))
                     preprocessed_images.append(self.preprocess(cropped_image))
                     categories.append(self.categories_dict[box_info.category])
+                num_players = len(preprocessed_images)
                 preprocessed_images = torch.stack(preprocessed_images)
+                categories = torch.tensor(categories,dtype=torch.long)
+                if num_players < self.max_players:
+                    pad_count = self.max_players - num_players
+                    C,H,W = preprocessed_images.shape[1:]
+                    image_paading = torch.zeros(pad_count,C,H,W)
+                    preprocessed_images = torch.cat(
+                    [preprocessed_images,image_paading],dim=0
+                    )   
+                    label_padding = torch.full((pad_count,),-1,dtype=torch.long)
+                    categories = torch.cat(
+                    [categories,label_padding],dim=0
+                    )
+                elif num_players > self.max_players:
+                    preprocessed_images = preprocessed_images[:self.max_players]
+                    categories = categories[:self.max_players]
+
                 all_frames_images.append(preprocessed_images)
                 all_frames_categories.append(categories)
-            # should Do Padding and Packing first (Coming)
-            # should convert first all_frames_categories to tensor (Coming)
+            all_frames_images = torch.stack(all_frames_images)
+            all_frames_categories = torch.stack(all_frames_categories)
             return all_frames_images,all_frames_categories
 
             
@@ -290,12 +307,29 @@ class PlayerGroupDataset(Dataset):
                     x1, y1, x2, y2 = box_info.box
                     cropped_image = image.crop((x1,y1,x2,y2))
                     preprocessed_images.append(self.preprocess(cropped_image))
-                    categories.append(self.player_dict[box_info.category])
+                    categories.append(self.categories_dict[box_info.category])
+                num_players = len(preprocessed_images)
                 preprocessed_images = torch.stack(preprocessed_images)
+                categories = torch.tensor(categories,dtype=torch.long)
+                if num_players < self.max_players:
+                    pad_count = self.max_players - num_players
+                    C,H,W = preprocessed_images.shape[1:]
+                    image_paading = torch.zeros(pad_count,C,H,W)
+                    preprocessed_images = torch.cat(
+                    [preprocessed_images,image_paading],dim=0
+                    )   
+                    label_padding = torch.full((pad_count,),-1,dtype=torch.long)
+                    categories = torch.cat(
+                    [categories,label_padding],dim=0
+                    )
+                elif num_players > self.max_players:
+                    preprocessed_images = preprocessed_images[:self.max_players]
+                    categories = categories[:self.max_players]
+
                 all_frames_images.append(preprocessed_images)
                 all_frames_categories.append(categories)
-            # should Do Padding and Packing first (Coming)
-            # should convert first all_frames_categories to tensor (Coming)
+            all_frames_images = torch.stack(all_frames_images)
+            all_frames_categories = torch.stack(all_frames_categories)
             return all_frames_images,all_frames_categories,group_activity
 
 
