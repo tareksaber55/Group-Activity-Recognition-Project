@@ -1,10 +1,10 @@
 import yaml
-from scripts.B5.b5_train import train 
-from scripts.B5.b5_eval import evaluate
+from scripts.B6.b6_train import train 
+from scripts.B6.b6_eval import evaluate
 from scripts.test_report import report
 from utils.dataset import PlayerGroupDataset
 from models.b3 import B3PlayerClassifier
-from models.b5 import Baseline5
+from models.b6 import Baseline6
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -15,7 +15,7 @@ import shutil
 
 
 # select config path
-config_path = 'configs/b5_config1.yaml'
+config_path = 'configs/b6_config1.yaml'
 
 with open(config_path,'r') as f:
     config_dict = yaml.safe_load(f)
@@ -23,6 +23,7 @@ with open(config_path,'r') as f:
 
 # device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"Used Device :{device}")
 
 # backbone
 with open(config_dict['train']['backbone'],'rb') as f:
@@ -32,7 +33,8 @@ backbone = B3PlayerClassifier().to(device)
 backbone.load_state_dict(state_dict=backbone_dict['model_state_dict'])
 
 # model
-model = Baseline5(backbone=backbone,num_classes=len(config_dict['dataset']['group_classes'])).to(device)
+model = Baseline6(backbone=backbone,num_classes=len(config_dict['dataset']['group_classes'])).to(device)
+
 
 # optimizer
 optimizer_name = config_dict['train']['optimizer']['type']

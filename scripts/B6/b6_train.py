@@ -3,7 +3,7 @@ import torch.optim as optim
 import torch.nn as nn
 from utils.logger import Logger
 import os
-from scripts.B5.b5_eval import evaluate
+from scripts.B6.b6_eval import evaluate
 from sklearn.metrics import f1_score
 from torch.utils.tensorboard import SummaryWriter
 
@@ -65,6 +65,6 @@ def train(model,optimizer,criterion,train_loader,val_loader,epochs,scheduler,dev
                 scheduler.step(val_loss)
             else:
                 scheduler.step()
-        print(f"epoch {epoch} | train loss {epoch_loss:.4f} | val loss {val_loss:.4f} | val acc {val_accuracy:.2f} | val f1 {val_f1score:.4f}")
+        print(f"epoch {epoch + 1} | train loss {epoch_loss:.4f} | val loss {val_loss:.4f} | val acc {val_accuracy:.2f} | val f1 {val_f1score:.4f}")
     writer.close()
 
