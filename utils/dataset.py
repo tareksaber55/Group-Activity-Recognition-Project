@@ -307,7 +307,7 @@ class PlayerGroupDataset(Dataset):
                     x1, y1, x2, y2 = box_info.box
                     cropped_image = image.crop((x1,y1,x2,y2))
                     preprocessed_images.append(self.preprocess(cropped_image))
-                    categories.append(self.categories_dict[box_info.category])
+                    categories.append(self.player_dict[box_info.category])
                 num_players = len(preprocessed_images)
                 preprocessed_images = torch.stack(preprocessed_images)
                 categories = torch.tensor(categories,dtype=torch.long)
