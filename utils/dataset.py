@@ -35,8 +35,10 @@ class ImageLevelDataset(Dataset):
 
                 category = categories_dict[clip_dict['category']]
 
+                sorted_frame_ids = sorted(clip_dict['frame_boxes_dct'].keys())
+
                 if one_frame:
-                    frame_id = list(clip_dict['frame_boxes_dct'].keys())[4]
+                    frame_id = sorted_frame_ids[4]
 
                     image_path = os.path.join(
                         input_root,
@@ -53,7 +55,7 @@ class ImageLevelDataset(Dataset):
                 else:
                     frames = []
 
-                    for frame_id in clip_dict['frame_boxes_dct']:
+                    for frame_id in sorted_frame_ids:
                         image_path = os.path.join(
                             input_root,
                             video,
@@ -128,15 +130,16 @@ class PlayerLevelDataset(Dataset):
                 continue
             for clip in videos_annot[video]:
                 clip_dict = videos_annot[video][clip]
+                sorted_frame_ids = sorted(clip_dict['frame_boxes_dct'].keys())
                 if one_frame:
-                    frame_id = list(clip_dict['frame_boxes_dct'].keys())[4]
+                    frame_id = sorted_frame_ids[4]
                     frame_path = os.path.join(input_root,video,clip,f'{frame_id}.jpg')
                     self.samples.append({'image_path':frame_path,
                                         'frame_boxes':clip_dict['frame_boxes_dct'][frame_id]})
                 else:
                     frames_path = []
                     frames_boxes = []
-                    for frame_id in clip_dict['frame_boxes_dct']:
+                    for frame_id in sorted_frame_ids:
                         frame_path = os.path.join(input_root,video,clip,f'{frame_id}.jpg')
                         frame_boxes = clip_dict['frame_boxes_dct'][frame_id]
                         frames_path.append(frame_path)
@@ -211,11 +214,8 @@ class PlayerLevelDataset(Dataset):
             all_frames_images = torch.stack(all_frames_images)
             all_frames_categories = torch.stack(all_frames_categories)
             return all_frames_images,all_frames_categories
-
             
 
-
-           
 class PlayerGroupDataset(Dataset):
     def __init__(
         self,
@@ -243,8 +243,9 @@ class PlayerGroupDataset(Dataset):
                 continue
             for clip in videos_annot[video]:
                 clip_dict = videos_annot[video][clip]
+                sorted_frame_ids = sorted(clip_dict['frame_boxes_dct'].keys())
                 if one_frame:
-                    frame_id = list(clip_dict['frame_boxes_dct'].keys())[4]
+                    frame_id = sorted_frame_ids[4]
                     frame_path = os.path.join(input_root,video,clip,f'{frame_id}.jpg')
                     self.samples.append({'image_path':frame_path,
                                         'frame_boxes':clip_dict['frame_boxes_dct'][frame_id],
@@ -253,7 +254,7 @@ class PlayerGroupDataset(Dataset):
                 else:
                     frames_path = []
                     frames_boxes = []
-                    for frame_id in clip_dict['frame_boxes_dct']:
+                    for frame_id in sorted_frame_ids:
                         frame_path = os.path.join(input_root,video,clip,f'{frame_id}.jpg')
                         frame_boxes = clip_dict['frame_boxes_dct'][frame_id]
                         frames_path.append(frame_path)
@@ -331,9 +332,6 @@ class PlayerGroupDataset(Dataset):
             all_frames_images = torch.stack(all_frames_images)
             all_frames_categories = torch.stack(all_frames_categories)
             return all_frames_images,all_frames_categories,group_activity
-
-
-
 
 
 
