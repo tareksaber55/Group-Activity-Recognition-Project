@@ -35,8 +35,8 @@ train:
     factor : 0.1
 
   batch_size:
-    train : 2
-    val : 2
+    train : 1
+    val : 1
 
   num_workers : 4
 
