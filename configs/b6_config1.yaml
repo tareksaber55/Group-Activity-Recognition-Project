@@ -50,5 +50,5 @@ train:
   backbone: /kaggle/input/models/tareksaber/b3-player-classifier-model/pytorch/default/1/checkpoint.pth
 
 experiment:
-  output_dir: /kaggle/working/b5
+  output_dir: /kaggle/working/b6
   name: model_1_config_1
