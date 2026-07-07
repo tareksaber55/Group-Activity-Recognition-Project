@@ -27,11 +27,12 @@ class report:
             labels = [self.player_labels[k] for k in sorted(self.player_labels.keys())]
         # confusion matrix
         cm = confusion_matrix(self.all_labels,self.all_preds,normalize='true')
+        plt.figure(figsize=(10,8))
         sns.heatmap(cm,annot=True,fmt='.2f',xticklabels=labels,yticklabels=labels,cmap='Blues')
         plt.xlabel("Predicted")
         plt.ylabel("True")
         plt.title("Confusion Matrix")
-
+        plt.tight_layout()
         plt.savefig(os.path.join(output_path,'confusion_matrix.png'))
 
         # classification report + f1_score
