@@ -4,6 +4,7 @@ from scripts.B5.b5_player_level_eval import evaluate
 from scripts.test_report import report
 from utils.dataset import PlayerLevelDataset
 from models.b5 import B5PlayerClassifier
+from models.b3 import B3PlayerClassifier
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -22,10 +23,20 @@ with open(config_path,'r') as f:
 
 # device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f'Used Device: {device}')
 
+with open(config_dict['train']['backbone'],'rb') as f:
+    backbone_dict =  torch.load(f,map_location=device)
+
+backbone = B3PlayerClassifier().to(device)
+backbone.load_state_dict(state_dict=backbone_dict['model_state_dict'])
 
 # model
-model = B5PlayerClassifier(num_classes=len(config_dict['dataset']['classes'])).to(device)
+model = B5PlayerClassifier(backbone=backbone,num_classes=len(config_dict['dataset']['classes'])).to(device)
+if torch.cuda.device_count() > 1:
+    print(f"Using {torch.cuda.device_count()} GPUs")
+    model = nn.DataParallel(model)
+
 
 # optimizer
 optimizer_name = config_dict['train']['optimizer']['type']
@@ -125,8 +136,10 @@ train(model,optimizer,criterion,train_loader,val_loader,epochs,scheduler,device,
 shutil.copy(config_path, os.path.join(output_path, "config.yaml"))
 
 checkpoint_dict = torch.load(os.path.join(output_path,'checkpoints','checkpoint.pth'),map_location=device)
-model.load_state_dict(checkpoint_dict['model_state_dict'])
-
+if isinstance(model, nn.DataParallel):
+    model.module.load_state_dict(checkpoint_dict['model_state_dict'])
+else:
+    model.load_state_dict(checkpoint_dict['model_state_dict'])
 _,_,_,all_labels,all_preds =  evaluate(model,test_loader,criterion,device)
 final_report = report(all_labels,all_preds,team_level=False)
 final_report.make_report(output_path)

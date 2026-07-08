@@ -62,10 +62,13 @@ def train(model,optimizer,criterion,train_loader,val_loader,epochs,scheduler,dev
         if val_loss < best_loss:
             best_loss = val_loss
             checkpoint = {
-                'epoch':epoch,
-                'model_state_dict':model.state_dict(),
-                'optimizer_state_dict':optimizer.state_dict(),
-                'loss':val_loss
+            'epoch': epoch,
+            'model_state_dict':
+                model.module.state_dict()
+                if isinstance(model, nn.DataParallel)
+                else model.state_dict(),
+            'optimizer_state_dict': optimizer.state_dict(),
+            'loss': val_loss
             }
             torch.save(checkpoint,os.path.join(checkpoint_dir,'checkpoint.pth'))
         if scheduler:

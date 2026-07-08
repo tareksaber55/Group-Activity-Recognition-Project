@@ -6,12 +6,16 @@ import torchvision.models as models
 
 
 class B5PlayerClassifier(nn.Module):
-    def __init__(self,num_classes = 9):
+    def __init__(self,backbone = None , num_classes = 9):
         super(B5PlayerClassifier,self).__init__()
-        self.cnn = models.resnet50(weights = models.ResNet50_Weights.DEFAULT)
-        lstm_in_features = self.cnn.fc.in_features
-        self.cnn = nn.Sequential(*list(self.cnn.children())[:-1])
-        self.lstm = nn.LSTM(input_size=lstm_in_features,
+        if backbone:
+            self.cnn = nn.Sequential(*list(backbone.model.children())[:-1])
+            for param in self.cnn.parameters():
+                param.requires_grad = False
+        else:
+            self.cnn = models.resnet50(weights = models.ResNet50_Weights.DEFAULT)
+            self.cnn = nn.Sequential(*list(self.cnn.children())[:-1])
+        self.lstm = nn.LSTM(input_size=2048,
                             hidden_size=1024,
                             num_layers=1,
                             batch_first=True)
