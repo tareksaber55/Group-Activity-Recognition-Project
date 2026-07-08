@@ -25,6 +25,12 @@ class B5PlayerClassifier(nn.Module):
             nn.Dropout(0.5),
             nn.Linear(512,num_classes)
         )
+    
+    def train(self,mode=True):
+        super().train(mode)
+        self.cnn.eval()
+        return self
+
     def forward(self,x):
         B,F,P,C,H,W = x.shape
         x = x.view(B*F*P,C,H,W)
