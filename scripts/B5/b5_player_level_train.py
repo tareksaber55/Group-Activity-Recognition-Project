@@ -13,6 +13,7 @@ def train(model,optimizer,criterion,train_loader,val_loader,epochs,scheduler,dev
     best_loss = float('inf')
     checkpoint_dir = os.path.join(output_path,'checkpoints')
     os.makedirs(checkpoint_dir,exist_ok=True)
+    no_update = 0
     for epoch in range(epochs):
         model.train()
         epoch_loss = 0
@@ -71,6 +72,9 @@ def train(model,optimizer,criterion,train_loader,val_loader,epochs,scheduler,dev
             'loss': val_loss
             }
             torch.save(checkpoint,os.path.join(checkpoint_dir,'checkpoint.pth'))
+            no_update = 0
+        else:
+            no_update += 1
         if scheduler:
             writer.add_scalar('Learning Rate',optimizer.param_groups[0]['lr'],epoch)
             if isinstance(scheduler , optim.lr_scheduler.ReduceLROnPlateau):
@@ -78,4 +82,7 @@ def train(model,optimizer,criterion,train_loader,val_loader,epochs,scheduler,dev
             else:
                 scheduler.step()
         print(f"epoch {epoch+1} | train loss {epoch_loss:.4f} | val loss {val_loss:.4f} | val acc {val_accuracy:.2f} | val f1 {val_f1score:.4f}")
+        if no_update >= 3:
+            print(f"Early Stopping at Epoch {epoch+1}")
+            break
     writer.close()
