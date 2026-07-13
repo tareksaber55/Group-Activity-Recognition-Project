@@ -96,9 +96,6 @@ train_transform = transforms.Compose([
         transforms.GaussianBlur(kernel_size=3, sigma=(0.1, 1.0))
     ], p=0.2),
 
-    transforms.RandomApply([
-        transforms.ColorJitter(brightness=0.3, contrast=0.3, saturation=0.2)
-    ], p=0.2),
 
     transforms.ToTensor(),
 
