@@ -46,3 +46,30 @@ class B5PlayerClassifier(nn.Module):
         return x
 
 
+ 
+class B5GroupClassifier(nn.Module):
+    def __init__(self,backbone ,num_classes = 8):
+        super(B5GroupClassifier,self).__init__()
+        self.backbone = backbone
+        self.backbone.classifier = nn.Identity()
+        for param in self.backbone.parameters():
+            param.requires_grad = False
+        self.classifier = nn.Sequential(
+            nn.Linear(2048,512),
+            nn.ReLU(),
+            nn.Dropout(0.5),
+            nn.Linear(512,num_classes)
+        )
+    def train(self,mode=True):
+        super().train(mode)
+        self.backbone.eval()
+        return self
+    
+
+    def forward(self,x):
+        B,F,P,C,H,W = x.shape
+        x = self.backbone(x)
+        x,_ = torch.max(x,dim=1)
+        x = self.classifier(x)
+        return x
+
