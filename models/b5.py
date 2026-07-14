@@ -55,7 +55,7 @@ class B5GroupClassifier(nn.Module):
         for param in self.backbone.parameters():
             param.requires_grad = False
         self.classifier = nn.Sequential(
-            nn.Linear(2048,512),
+            nn.Linear(1024,512),
             nn.ReLU(),
             nn.Dropout(0.5),
             nn.Linear(512,num_classes)
