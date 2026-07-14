@@ -35,8 +35,8 @@ train:
     factor : 0.1
 
   batch_size:
-    train : 2
-    val : 2
+    train : 4
+    val : 4
 
   num_workers : 4
   pin_memory : True
