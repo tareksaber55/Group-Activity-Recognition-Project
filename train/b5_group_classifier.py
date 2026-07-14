@@ -32,6 +32,10 @@ backbone.load_state_dict(state_dict=backbone_dict['model_state_dict'])
 
 # model
 model = B5GroupClassifier(backbone=backbone,num_classes=len(config_dict['dataset']['group_classes'])).to(device)
+if torch.cuda.device_count() > 1:
+    print(f"Using {torch.cuda.device_count()} GPUs")
+    model = nn.DataParallel(model)
+
 
 # optimizer
 optimizer_name = config_dict['train']['optimizer']['type']
