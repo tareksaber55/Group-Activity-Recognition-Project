@@ -121,9 +121,9 @@ test_dataset = PlayerLevelDataset(input_root,annot_file,categories_dict,test_ids
 num_workers = config_dict['train']['num_workers']
 pin_memory = config_dict['train']['pin_memory']
 
-train_loader = DataLoader(train_dataset,batch_size=config_dict['train']['batch_size']['train'],shuffle=True,num_workers=num_workers,pin_memory=False)
-val_loader = DataLoader(val_dataset,batch_size=config_dict['train']['batch_size']['val'],shuffle=False,num_workers=num_workers,pin_memory=False)
-test_loader = DataLoader(test_dataset,batch_size=config_dict['train']['batch_size']['val'],shuffle=False,num_workers=num_workers,pin_memory=False)
+train_loader = DataLoader(train_dataset,batch_size=config_dict['train']['batch_size']['train'],shuffle=True,num_workers=num_workers,pin_memory=pin_memory)
+val_loader = DataLoader(val_dataset,batch_size=config_dict['train']['batch_size']['val'],shuffle=False,num_workers=num_workers,pin_memory=pin_memory)
+test_loader = DataLoader(test_dataset,batch_size=config_dict['train']['batch_size']['val'],shuffle=False,num_workers=num_workers,pin_memory=pin_memory)
 
 # output_path
 output_path = os.path.join(config_dict['experiment']['output_dir'],
