@@ -133,8 +133,10 @@ train(model,optimizer,criterion,train_loader,val_loader,epochs,scheduler,device,
 shutil.copy(config_path, os.path.join(output_path, "config.yaml"))
 
 checkpoint_dict = torch.load(os.path.join(output_path,'checkpoints','checkpoint.pth'),map_location=device)
-model.load_state_dict(checkpoint_dict['model_state_dict'])
-
+if isinstance(model, nn.DataParallel):
+    model.module.load_state_dict(checkpoint_dict['model_state_dict'])
+else:
+    model.load_state_dict(checkpoint_dict['model_state_dict'])
 _,_,_,all_labels,all_preds =  evaluate(model,test_loader,criterion,device)
 final_report = report(all_labels,all_preds,team_level=True)
 final_report.make_report(output_path)
