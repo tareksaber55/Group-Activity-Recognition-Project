@@ -30,20 +30,19 @@ dataset:
 
 train:
   optimizer:
-    type: adamw
+    type: sgd
     lr: 0.0001
-    weight_decay: 1
+    weight_decay: 1e-1
 
   epochs: 12
 
   scheduler:
-    type: reduce_on_plateau
-    patience : 3
-    factor : 0.1
+    type: cosineanneling
+
 
   batch_size:
-    train : 2
-    val : 2
+    train : 4
+    val : 4
 
   num_workers : 4
   pin_memory : True
