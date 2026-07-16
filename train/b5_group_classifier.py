@@ -28,7 +28,7 @@ with open(config_dict['train']['backbone'],'rb') as f:
     backbone_dict =  torch.load(f,map_location=device)
 
 backbone = B5PlayerClassifier().to(device)
-backbone.module.load_state_dict(state_dict=backbone_dict['model_state_dict'])
+backbone.load_state_dict(state_dict=backbone_dict['model_state_dict'])
 
 # model
 model = B5GroupClassifier(backbone=backbone,num_classes=len(config_dict['dataset']['group_classes'])).to(device)
