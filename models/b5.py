@@ -13,8 +13,6 @@ class B5PlayerClassifier(nn.Module):
         else:
             self.cnn = models.resnet50(weights = models.ResNet50_Weights.DEFAULT)
             self.cnn = nn.Sequential(*list(self.cnn.children())[:-1])
-        for param in self.cnn.parameters():
-                param.requires_grad = False
         self.lstm = nn.LSTM(input_size=2048,
                             hidden_size=1024,
                             num_layers=1,
@@ -25,11 +23,6 @@ class B5PlayerClassifier(nn.Module):
             nn.Dropout(0.5),
             nn.Linear(512,num_classes)
         )
-    
-    def train(self,mode=True):
-        super().train(mode)
-        self.cnn.eval()
-        return self
 
     def forward(self,x):
         B,F,P,C,H,W = x.shape
@@ -56,6 +49,7 @@ class B5GroupClassifier(nn.Module):
             param.requires_grad = False
         self.classifier = nn.Sequential(
             nn.Linear(1024,512),
+            nn.BatchNorm1d(512),
             nn.ReLU(),
             nn.Dropout(0.5),
             nn.Linear(512,num_classes)
@@ -67,7 +61,6 @@ class B5GroupClassifier(nn.Module):
     
 
     def forward(self,x):
-        B,F,P,C,H,W = x.shape
         x = self.backbone(x)
         x,_ = torch.max(x,dim=1)
         x = self.classifier(x)
