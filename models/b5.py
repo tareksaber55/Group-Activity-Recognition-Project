@@ -78,6 +78,7 @@ class B5GroupClassifier(nn.Module):
         x,_ = self.lstm(x)
         x = x[:,-1,:]
         x = x.view(B,P,-1)
+        x,_ = torch.max(x,dim=1) 
         x = self.classifier(x)
         return x
 
