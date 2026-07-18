@@ -50,8 +50,7 @@ train:
   num_workers : 4
   pin_memory : True
   
-  player_backbone: /kaggle/input/models/tareksaber/b5-player-classifier-model/pytorch/default/1/checkpoint.pth
-  group_backbone: /kaggle/input/models/tareksaber/b6-group-classifier-model/pytorch/default/1/checkpoint.pth
+  backbone: /kaggle/input/models/tareksaber/b5-player-classifier-model/pytorch/default/1/checkpoint.pth
 
 experiment:
   output_dir: /kaggle/working/b5/group_classifier

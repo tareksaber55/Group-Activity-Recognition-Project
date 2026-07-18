@@ -27,25 +27,15 @@ with open(config_path,'r') as f:
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # player backbone
-with open(config_dict['train']['player_backbone'],'rb') as f:
-    player_backbone_dict =  torch.load(f,map_location=device)
+with open(config_dict['train']['backbone'],'rb') as f:
+    backbone_dict =  torch.load(f,map_location=device)
 
-player_backbone = B5PlayerClassifier().to(device)
-player_backbone.load_state_dict(state_dict=player_backbone_dict['model_state_dict'])
-
-# group backbone
-with open(config_dict['train']['group_backbone'],'rb') as f:
-    group_backbone_dict =  torch.load(f,map_location=device)
-
-dummy_backbone = B3PlayerClassifier()
-
-group_backbone = Baseline6(dummy_backbone).to(device)
-group_backbone.load_state_dict(state_dict=group_backbone_dict['model_state_dict'])
+backbone = B5PlayerClassifier().to(device)
+backbone.load_state_dict(state_dict=backbone_dict['model_state_dict'])
 
 
 # model
-model = Baseline7(player_backbone=player_backbone,
-                  group_backbone=group_backbone,
+model = Baseline7(backbone=backbone,
                   num_classes=len(config_dict['dataset']['group_classes'])
                   ).to(device)
 if torch.cuda.device_count() > 1:

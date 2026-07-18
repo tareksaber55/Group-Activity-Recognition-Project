@@ -4,11 +4,16 @@ import torchvision
 import torchvision.models as models
 
 class Baseline7(nn.Module):
-    def __init__(self,player_backbone,group_backbone,num_classes = 8):
+    def __init__(self,backbone,num_classes = 8):
         super(Baseline7,self).__init__()
-        self.cnn = player_backbone.cnn
-        self.lstm1 = player_backbone.lstm
-        self.lstm2 = group_backbone.lstm
+        self.cnn = backbone.cnn
+        self.lstm1 = backbone.lstm
+        self.lstm2 = nn.LSTM(
+            input_size=1024,
+            hidden_size=1024,
+            num_layers=1,
+            batch_first=True
+        )
         for param in self.cnn.parameters():
             param.requires_grad = False
         for param in self.lstm1.parameters():
