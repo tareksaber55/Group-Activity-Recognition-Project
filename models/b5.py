@@ -14,7 +14,7 @@ class B5PlayerClassifier(nn.Module):
             self.cnn = models.resnet50(weights = models.ResNet50_Weights.DEFAULT)
             self.cnn = nn.Sequential(*list(self.cnn.children())[:-1])
         for param in self.cnn.parameters():
-                param.requires_grad = False
+            param.requires_grad = False
         self.lstm = nn.LSTM(input_size=2048,
                             hidden_size=1024,
                             num_layers=1,
