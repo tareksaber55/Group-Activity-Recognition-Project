@@ -26,7 +26,7 @@ with open(config_path,'r') as f:
 # device
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
-# player backbone
+# backbone
 with open(config_dict['train']['backbone'],'rb') as f:
     backbone_dict =  torch.load(f,map_location=device)
 
