@@ -3,9 +3,7 @@ from scripts.B7.b7_train import train
 from scripts.B7.b7_eval import evaluate
 from scripts.test_report import report
 from utils.dataset import PlayerGroupDataset
-from models.b3 import B3PlayerClassifier
 from models.b5 import B5PlayerClassifier
-from models.b6 import Baseline6
 from models.b7 import Baseline7
 import torch
 import torch.nn as nn
