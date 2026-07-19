@@ -19,14 +19,14 @@ class Baseline7(nn.Module):
         for param in self.lstm1.parameters():
             param.requires_grad = False
         self.player_proj = nn.Sequential(
-            nn.Linear(3072,2048),
-            nn.LayerNorm(2048),
+            nn.Linear(3072, 2048),
+            nn.BatchNorm1d(2048),
             nn.ReLU(),
             nn.Dropout(0.3)
         )
         self.classifier = nn.Sequential(
             nn.Linear(1024,512),
-            nn.LayerNorm(512),
+            nn.BatchNorm1d(512),
             nn.ReLU(),
             nn.Dropout(0.5),
             nn.Linear(512,num_classes)
@@ -59,7 +59,11 @@ class Baseline7(nn.Module):
 
         person_features,_ = torch.max(person_features,dim=2)
 
+        person_features = person_features.reshape(B * F, 3072)
+
         person_features = self.player_proj(person_features)
+
+        person_features = person_features.reshape(B, F, 2048)
 
         lstm2_out,_ = self.lstm2(person_features)
 
