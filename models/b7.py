@@ -9,7 +9,7 @@ class Baseline7(nn.Module):
         self.cnn = backbone.cnn
         self.lstm1 = backbone.lstm
         self.lstm2 = nn.LSTM(
-            input_size=1024,
+            input_size=2048,
             hidden_size=1024,
             num_layers=1,
             batch_first=True
@@ -19,13 +19,14 @@ class Baseline7(nn.Module):
         for param in self.lstm1.parameters():
             param.requires_grad = False
         self.player_proj = nn.Sequential(
-            nn.Linear(3072,1024),
+            nn.Linear(3072,2048),
+            nn.LayerNorm(2048),
             nn.ReLU(),
             nn.Dropout(0.3)
         )
         self.classifier = nn.Sequential(
             nn.Linear(1024,512),
-            nn.BatchNorm1d(512),
+            nn.LayerNorm(512),
             nn.ReLU(),
             nn.Dropout(0.5),
             nn.Linear(512,num_classes)
