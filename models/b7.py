@@ -22,14 +22,20 @@ class Baseline7(nn.Module):
             nn.Linear(3072,2048),
             nn.LayerNorm(2048),
             nn.ReLU(),
-            nn.Dropout(0.3)
+            nn.Dropout(0.2)
         )
         self.classifier = nn.Sequential(
-            nn.Linear(1024,512),
+            nn.Linear(1024, 512),
             nn.LayerNorm(512),
             nn.ReLU(),
             nn.Dropout(0.5),
-            nn.Linear(512,num_classes)
+
+            nn.Linear(512, 256),
+            nn.LayerNorm(256),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+
+            nn.Linear(256, num_classes)
         )
 
     def train(self,mode=True):
