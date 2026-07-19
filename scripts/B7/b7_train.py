@@ -73,7 +73,7 @@ def train(model,optimizer,criterion,train_loader,val_loader,epochs,scheduler,dev
             else:
                 scheduler.step()
         print(f"epoch {epoch+1} | train loss {epoch_loss:.4f} | val loss {val_loss:.4f} | val acc {val_accuracy:.2f} | val f1 {val_f1score:.4f}")
-        if no_update >= 4:
+        if no_update >= 5:
             print(f"Early Stopping at Epoch {epoch+1}")
             break
     writer.close()
