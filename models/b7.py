@@ -55,7 +55,7 @@ class Baseline7(nn.Module):
 
         person_features = torch.cat([cnn_out,lstm1_out],dim=-1)
 
-        person_features = torch.max(person_features,dim=2)
+        person_features,_ = torch.max(person_features,dim=2)
 
         person_features = person_features.reshape(B * F, 3072)
 
