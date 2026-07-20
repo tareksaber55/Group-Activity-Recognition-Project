@@ -75,7 +75,8 @@ else:
     scheduler = None
 
 # criterion
-criterion = nn.CrossEntropyLoss(ignore_index=-1)
+label_smoothing = config_dict['train']['label_smoothing']
+criterion = nn.CrossEntropyLoss(ignore_index=-1,label_smoothing=label_smoothing)
 
 
 

@@ -31,17 +31,17 @@ dataset:
 train:
   optimizer:
     type: adamw
-    lr: 0.00001
+    lr: 0.00005
     weight_decay: 1e-2
 
-  epochs: 20
+  epochs: 25
 
   scheduler:
     type: reduce_on_plateau
     factor: 0.1
     patience: 3
     
-
+  label_smoothing: 0.1
 
   batch_size:
     train : 8
