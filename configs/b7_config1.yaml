@@ -51,7 +51,7 @@ train:
   pin_memory : True
   
   player_backbone: /kaggle/input/models/tareksaber/b5-player-classifier-model/pytorch/default/1/checkpoint.pth
-  image_backbone:
+  image_backbone: /kaggle/input/models/tareksaber/b1-group-classifier-model/pytorch/default/1/checkpoint.pth
 
 experiment:
   output_dir: /kaggle/working/b7
