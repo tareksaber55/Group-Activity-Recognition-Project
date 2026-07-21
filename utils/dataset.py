@@ -5,7 +5,9 @@ from PIL import Image
 from utils import boxinfo
 import sys
 import torch
+from torchvision import transforms
 sys.modules['boxinfo'] = boxinfo  # make pickle find it as 'boxinfo'
+
 class ImageLevelDataset(Dataset):
     def __init__(
         self,
@@ -225,17 +227,20 @@ class PlayerGroupDataset(Dataset):
         group_dict,
         videos_ids,
         preprocess,
-        max_players = 12,
-        one_frame = True
+        max_players=12,
+        one_frame=True,
+        scene_preprocess=None
     ):
         self.max_players = max_players
         self.player_dict = player_dict
         self.group_dict = group_dict
         self.preprocess = preprocess
+        self.scene_preprocess = scene_preprocess if scene_preprocess is not None else transforms.Compose([])
+        
         self.one_frame = one_frame
-        with open(annot_pkl_path,'rb') as file:
+        with open(annot_pkl_path, 'rb') as file:
             videos_annot = pickle.load(file)
-        videos_ids_set = set(videos_ids) # Set make search O(1)
+        videos_ids_set = set(videos_ids)
         self.samples = []
 
         for video in videos_annot:
@@ -246,96 +251,87 @@ class PlayerGroupDataset(Dataset):
                 sorted_frame_ids = sorted(clip_dict['frame_boxes_dct'].keys())
                 if one_frame:
                     frame_id = sorted_frame_ids[4]
-                    frame_path = os.path.join(input_root,video,clip,f'{frame_id}.jpg')
-                    self.samples.append({'image_path':frame_path,
-                                        'frame_boxes':clip_dict['frame_boxes_dct'][frame_id],
-                                        'group_activity':self.group_dict[clip_dict['category']]
-                                        })
+                    frame_path = os.path.join(input_root, video, clip, f'{frame_id}.jpg')
+                    self.samples.append({'image_path': frame_path,
+                                          'frame_boxes': clip_dict['frame_boxes_dct'][frame_id],
+                                          'group_activity': self.group_dict[clip_dict['category']]
+                                          })
                 else:
                     frames_path = []
                     frames_boxes = []
                     for frame_id in sorted_frame_ids:
-                        frame_path = os.path.join(input_root,video,clip,f'{frame_id}.jpg')
+                        frame_path = os.path.join(input_root, video, clip, f'{frame_id}.jpg')
                         frame_boxes = clip_dict['frame_boxes_dct'][frame_id]
                         frames_path.append(frame_path)
                         frames_boxes.append(frame_boxes)
-                    self.samples.append({'frames_path':frames_path,
-                                        'frames_boxes':frames_boxes,
-                                        'group_activity':self.group_dict[clip_dict['category']]
-                                        })
-    
+                    self.samples.append({'frames_path': frames_path,
+                                          'frames_boxes': frames_boxes,
+                                          'group_activity': self.group_dict[clip_dict['category']]
+                                          })
+
     def __len__(self):
         return len(self.samples)
-    
+
     def __getitem__(self, index):
         sample = self.samples[index]
         group_activity = sample['group_activity']
+
         if self.one_frame:
             image = Image.open(sample['image_path']).convert('RGB')
+            scene_image = self.scene_preprocess(image)
+
             preprocessed_images = []
-            categories = []
             for box_info in sample['frame_boxes']:
                 x1, y1, x2, y2 = box_info.box
-                cropped_image = image.crop((x1,y1,x2,y2))
+                cropped_image = image.crop((x1, y1, x2, y2))
                 preprocessed_images.append(self.preprocess(cropped_image))
-                categories.append(self.player_dict[box_info.category])
+
             num_players = len(preprocessed_images)
             preprocessed_images = torch.stack(preprocessed_images)
-            categories = torch.tensor(categories,dtype=torch.long)
+
             if num_players < self.max_players:
                 pad_count = self.max_players - num_players
-                C,H,W = preprocessed_images.shape[1:]
-                image_paading = torch.zeros(pad_count,C,H,W)
-                preprocessed_images = torch.cat(
-                    [preprocessed_images,image_paading],dim=0
-                )
-                label_padding = torch.full((pad_count,),-1,dtype=torch.long)
-                categories = torch.cat(
-                    [categories,label_padding],dim=0
-                )
+                C, H, W = preprocessed_images.shape[1:]
+                image_padding = torch.zeros(pad_count, C, H, W)
+                preprocessed_images = torch.cat([preprocessed_images, image_padding], dim=0)
             elif num_players > self.max_players:
                 preprocessed_images = preprocessed_images[:self.max_players]
-                categories = categories[:self.max_players]
-            return preprocessed_images , categories , group_activity
+
+            return preprocessed_images, scene_image, group_activity
+
         else:
             all_frames_images = []
-            all_frames_categories = []
-            for frame_path,frame_boxes in zip(sample['frames_path'],sample['frames_boxes']):
+            all_scene_images = []
+
+            for frame_path, frame_boxes in zip(sample['frames_path'], sample['frames_boxes']):
                 image = Image.open(frame_path).convert('RGB')
+
+                scene_image = self.scene_preprocess(image)
+                all_scene_images.append(scene_image)
+
                 preprocessed_images = []
-                categories = []
                 for box_info in frame_boxes:
                     x1, y1, x2, y2 = box_info.box
-                    cropped_image = image.crop((x1,y1,x2,y2))
+                    cropped_image = image.crop((x1, y1, x2, y2))
                     preprocessed_images.append(self.preprocess(cropped_image))
-                    categories.append(self.player_dict[box_info.category])
+
                 num_players = len(preprocessed_images)
                 preprocessed_images = torch.stack(preprocessed_images)
-                categories = torch.tensor(categories,dtype=torch.long)
+
                 if num_players < self.max_players:
                     pad_count = self.max_players - num_players
-                    C,H,W = preprocessed_images.shape[1:]
-                    image_paading = torch.zeros(pad_count,C,H,W)
-                    preprocessed_images = torch.cat(
-                    [preprocessed_images,image_paading],dim=0
-                    )   
-                    label_padding = torch.full((pad_count,),-1,dtype=torch.long)
-                    categories = torch.cat(
-                    [categories,label_padding],dim=0
-                    )
+                    C, H, W = preprocessed_images.shape[1:]
+                    image_padding = torch.zeros(pad_count, C, H, W)
+                    preprocessed_images = torch.cat([preprocessed_images, image_padding], dim=0)
                 elif num_players > self.max_players:
                     preprocessed_images = preprocessed_images[:self.max_players]
-                    categories = categories[:self.max_players]
 
                 all_frames_images.append(preprocessed_images)
-                all_frames_categories.append(categories)
-            all_frames_images = torch.stack(all_frames_images)
-            all_frames_categories = torch.stack(all_frames_categories)
-            return all_frames_images,all_frames_categories,group_activity
 
+            all_frames_images = torch.stack(all_frames_images)   # (F, P, C, H, W)
+            all_scene_images = torch.stack(all_scene_images)     # (F, C, H, W)
 
-
-
+            return all_frames_images, all_scene_images, group_activity
 
 
 
