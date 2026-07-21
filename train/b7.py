@@ -3,6 +3,7 @@ from scripts.B7.b7_train import train
 from scripts.B7.b7_eval import evaluate
 from scripts.test_report import report
 from utils.dataset import PlayerGroupDataset
+from models.b1 import Baseline1
 from models.b5 import B5PlayerClassifier
 from models.b7 import Baseline7
 import torch
@@ -25,17 +26,24 @@ with open(config_path,'r') as f:
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # backbone
-with open(config_dict['train']['backbone'],'rb') as f:
+with open(config_dict['train']['player_backbone'],'rb') as f:
     backbone_dict =  torch.load(f,map_location=device)
 
-backbone = B5PlayerClassifier().to(device)
-backbone.load_state_dict(state_dict=backbone_dict['model_state_dict'])
+player_backbone = B5PlayerClassifier().to(device)
+player_backbone.load_state_dict(state_dict=backbone_dict['model_state_dict'])
 
+with open(config_dict['train']['image_backbone'],'rb') as f:
+    backbone_dict =  torch.load(f,map_location=device)
+
+image_backbone = Baseline1().to(device)
+image_backbone.load_state_dict(state_dict=backbone_dict['model_state_dict'])
 
 # model
-model = Baseline7(backbone=backbone,
+model = Baseline7(player_backbone=player_backbone,
+                  image_backbone=image_backbone,
                   num_classes=len(config_dict['dataset']['group_classes'])
                   ).to(device)
+
 if torch.cuda.device_count() > 1:
     print(f"Using {torch.cuda.device_count()} GPUs")
     model = nn.DataParallel(model)
@@ -93,7 +101,7 @@ group_dict = config_dict['dataset']['group_classes']
 # image has a lot of space around objects. Let's crop around
 # Do NOT use RandomHorizontalFlip , classes contain direction : l-pass , r-pass
 
-train_transform = transforms.Compose([
+player_train_transform = transforms.Compose([
     transforms.Resize((224,224)),
 
 
@@ -109,7 +117,7 @@ train_transform = transforms.Compose([
     )
 ])
 
-val_transform = transforms.Compose([
+player_val_transform = transforms.Compose([
     transforms.Resize((224,224)),
     transforms.ToTensor(),
     transforms.Normalize(
@@ -118,9 +126,62 @@ val_transform = transforms.Compose([
     )
 ])
 
-train_dataset = PlayerGroupDataset(input_root,annot_file,player_dict,group_dict,train_ids,train_transform,one_frame=False)
-val_dataset = PlayerGroupDataset(input_root,annot_file,player_dict,group_dict,val_ids,val_transform,one_frame=False)
-test_dataset = PlayerGroupDataset(input_root,annot_file,player_dict,group_dict,test_ids,val_transform,one_frame=False)
+
+
+image_train_transform = transforms.Compose([
+    transforms.Resize((256,256)),
+    transforms.RandomCrop((224, 224)),
+
+    transforms.RandomApply([
+        transforms.GaussianBlur(kernel_size=3, sigma=(0.1, 1.0))
+    ], p=0.2),
+    
+    transforms.ToTensor(),
+
+    transforms.Normalize(
+        mean=[0.485, 0.456, 0.406],
+        std=[0.229, 0.224, 0.225]
+    )
+])
+
+image_val_transform = transforms.Compose([
+    transforms.Resize((256,256)),
+    transforms.CenterCrop((224, 224)),
+    transforms.ToTensor(),
+    transforms.Normalize(
+        mean=[0.485, 0.456, 0.406],
+        std=[0.229, 0.224, 0.225]
+    )
+])
+
+
+train_dataset = PlayerGroupDataset(input_root=input_root,
+                                   annot_pkl_path=annot_file,
+                                   player_dict=player_dict,
+                                   group_dict=group_dict,
+                                   videos_ids=train_ids,
+                                   preprocess=player_train_transform,
+                                   one_frame=False,
+                                   scene_preprocess=image_train_transform
+                                   )
+val_dataset = PlayerGroupDataset(input_root=input_root,
+                                   annot_pkl_path=annot_file,
+                                   player_dict=player_dict,
+                                   group_dict=group_dict,
+                                   videos_ids=val_ids,
+                                   preprocess=player_val_transform,
+                                   one_frame=False,
+                                   scene_preprocess=image_val_transform
+                                   )
+test_dataset = PlayerGroupDataset(input_root=input_root,
+                                   annot_pkl_path=annot_file,
+                                   player_dict=player_dict,
+                                   group_dict=group_dict,
+                                   videos_ids=test_ids,
+                                   preprocess=player_val_transform,
+                                   one_frame=False,
+                                   scene_preprocess=image_val_transform
+                                   )
 
 num_workers = config_dict['train']['num_workers']
 pin_memory = config_dict['train']['pin_memory']
