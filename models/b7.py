@@ -16,8 +16,8 @@ class Baseline7(nn.Module):
         )
         for param in self.cnn.parameters():
             param.requires_grad = False
-        # for param in self.lstm1.parameters():
-        #     param.requires_grad = False
+        for param in self.lstm1.parameters():
+            param.requires_grad = False
         self.player_proj = nn.Sequential(
             nn.Linear(3072, 2048),
             nn.BatchNorm1d(2048),
@@ -50,10 +50,10 @@ class Baseline7(nn.Module):
             lstm_input = cnn_out.permute(0,2,1,3)
             lstm_input = lstm_input.reshape(B*P,F,2048)
 
-        lstm1_out,_ = self.lstm1(lstm_input)
+            lstm1_out,_ = self.lstm1(lstm_input)
 
-        lstm1_out = lstm1_out.reshape(B,P,F,1024)
-        lstm1_out = lstm1_out.permute(0,2,1,3)
+            lstm1_out = lstm1_out.reshape(B,P,F,1024)
+            lstm1_out = lstm1_out.permute(0,2,1,3)
 
         person_features = torch.cat([cnn_out,lstm1_out],dim=-1)
 
