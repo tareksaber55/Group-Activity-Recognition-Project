@@ -29,7 +29,7 @@ class Baseline8(nn.Module):
 
         # Player feature projection
         self.player_proj = nn.Sequential(
-            nn.Linear(3072, 2048),
+            nn.Linear(6144, 2048),
             nn.BatchNorm1d(2048),
             nn.ReLU(),
             nn.Dropout(0.3)
@@ -99,13 +99,13 @@ class Baseline8(nn.Module):
 
         # Aggregate players
 
-        left_player_features = player_features[:,:,:6,:].max(dim=2)
+        left_player_features,_ = player_features[:,:,:6,:].max(dim=2) # B , F , 3072
 
-        right_player_features = player_features[:,:,6:,:].max(dim=2)
+        right_player_features,_ = player_features[:,:,6:,:].max(dim=2) # B , F , 3072
 
-        player_features = torch.cat([left_player_features,right_player_features] , dim=2)
+        player_features = torch.cat([left_player_features,right_player_features] , dim=2) # B , F , 6144
 
-        player_features = player_features.view(B * F , 3072)
+        player_features = player_features.view(B * F , 6144)
         player_features = self.player_proj(player_features)
         player_features = player_features.view(B, F, 2048)
 
