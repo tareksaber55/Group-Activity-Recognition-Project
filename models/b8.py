@@ -17,7 +17,7 @@ class Baseline8(nn.Module):
         self.player_lstm = player_backbone.lstm
 
         self.lstm2 = nn.LSTM(
-            input_size=2048,
+            input_size=4096,
             hidden_size=1024,
             num_layers=1,
             batch_first=True
@@ -29,19 +29,17 @@ class Baseline8(nn.Module):
 
         # Player feature projection
         self.player_proj = nn.Sequential(
-            nn.Linear(6144, 2048),
+            nn.Linear(6144, 3072),
+            nn.BatchNorm1d(3072),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(3072, 2048),
             nn.BatchNorm1d(2048),
             nn.ReLU(),
-            nn.Dropout(0.3)
+            nn.Dropout(0.2)
         )
 
-        # Fusion projection
-        self.combine_proj = nn.Sequential(
-            nn.Linear(4096, 2048),
-            nn.BatchNorm1d(2048),
-            nn.ReLU(),
-            nn.Dropout(0.3)
-        )
+
 
         self.classifier = nn.Sequential(
             nn.Linear(1024, 512),
@@ -114,9 +112,6 @@ class Baseline8(nn.Module):
         # image + players
         fusion = torch.cat( [image, player_features] ,dim=-1) # (B,F,4096)
 
-        fusion = fusion.view(B * F, 4096)
-        fusion = self.combine_proj(fusion)
-        fusion = fusion.view(B, F, 2048)
 
         # Group temporal modeling
         out, _ = self.lstm2(fusion)
