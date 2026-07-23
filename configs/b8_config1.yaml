@@ -54,5 +54,5 @@ train:
   image_backbone: /kaggle/input/models/tareksaber/b1-group-classifier-model/pytorch/default/1/checkpoint.pth
 
 experiment:
-  output_dir: /kaggle/working/b7
+  output_dir: /kaggle/working/b8
   name: model_1_config_1
