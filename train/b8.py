@@ -16,7 +16,7 @@ import shutil
 
 
 # select config path
-config_path = 'configs/b7_config1.yaml'
+config_path = 'configs/b8_config1.yaml'
 
 with open(config_path,'r') as f:
     config_dict = yaml.safe_load(f)
