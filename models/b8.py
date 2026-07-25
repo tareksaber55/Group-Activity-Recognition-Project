@@ -124,16 +124,3 @@ class Baseline8(nn.Module):
         out = out[:, -1, :]
 
         return self.classifier(out)
-
-
-
-        
-
-
-
-
-
-
-
-
-    
