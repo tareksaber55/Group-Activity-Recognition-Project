@@ -1,6 +1,9 @@
 import torch
 import torch.nn as nn
 
+import torch
+import torch.nn as nn
+
 class Baseline8(nn.Module):
     def __init__(self, player_backbone, image_backbone, num_classes=8):
         super().__init__()
@@ -23,19 +26,19 @@ class Baseline8(nn.Module):
             for param in module.parameters():
                 param.requires_grad = False
 
-        # Player feature projection
+        # Individual player feature projection (3072 -> 1024)
         self.player_proj = nn.Sequential(
-            nn.Linear(6144, 3072),
-            nn.BatchNorm1d(3072),
-            nn.ReLU(),
-            nn.Dropout(0.2),
             nn.Linear(3072, 2048),
             nn.BatchNorm1d(2048),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(2048, 1024),
+            nn.BatchNorm1d(1024),
             nn.ReLU(),
             nn.Dropout(0.2)
         )
 
-        # Fusion projection
+        # Fusion projection (4096 -> 2048)
         self.combine_proj = nn.Sequential(
             nn.Linear(4096, 2048),
             nn.BatchNorm1d(2048),
@@ -59,14 +62,12 @@ class Baseline8(nn.Module):
         return self
 
     def forward(self, x_player, x_image):
-
-        # x_player : (B,F,P,C,H,W)
-        # x_image  : (B,F,C,H,W)
+        # x_player : (B, F, P, C, H, W)
+        # x_image  : (B, F, C, H, W)
 
         B, F, P, C, H, W = x_player.shape
 
         with torch.no_grad():
-
             # Image branch
             image = x_image.view(B * F, C, H, W)
             image = self.image_cnn(image)
@@ -85,7 +86,7 @@ class Baseline8(nn.Module):
                       .view(B * P, F, 2048)
             )
 
-        # Person temporal modeling 
+        # Person temporal modeling
         player_temp, _ = self.player_lstm(lstm_input)
 
         player_temp = (
@@ -94,25 +95,23 @@ class Baseline8(nn.Module):
                        .contiguous()
         )
 
-        # Static + Temporal player features
-        player_features = torch.cat([player, player_temp],dim=-1) # (B,F,P,3072)                                  
+        # Static + Temporal player features: shape (B, F, P, 3072)
+        player_features = torch.cat([player, player_temp], dim=-1)
 
-        # Aggregate players
-
-        left_player_features,_ = player_features[:,:,:6,:].max(dim=2)
-
-        right_player_features,_ = player_features[:,:,6:,:].max(dim=2)
-
-        player_features = torch.cat([left_player_features,right_player_features] , dim=2)
-
-        player_features = player_features.view(B * F , 3072)
+        # 1. Project per-player features down to 1024 FIRST
+        player_features = player_features.view(B * F * P, 3072)
         player_features = self.player_proj(player_features)
-        player_features = player_features.view(B, F, 2048)
+        player_features = player_features.view(B, F, P, 1024)
 
-        
+        # 2. Separate into teams and max-pool across team members
+        left_player_features, _ = player_features[:, :, :6, :].max(dim=2)   # (B, F, 1024)
+        right_player_features, _ = player_features[:, :, 6:, :].max(dim=2)  # (B, F, 1024)
 
-        # image + players
-        fusion = torch.cat( [image, player_features] ,dim=-1) # (B,F,4096)
+        # 3. Concatenate teams to form 2048-dim player feature vector
+        player_combined = torch.cat([left_player_features, right_player_features], dim=-1) # (B, F, 2048)
+
+        # 4. Image + Players fusion (2048 + 2048 = 4096)
+        fusion = torch.cat([image, player_combined], dim=-1) # (B, F, 4096)
 
         fusion = fusion.view(B * F, 4096)
         fusion = self.combine_proj(fusion)
@@ -121,6 +120,7 @@ class Baseline8(nn.Module):
         # Group temporal modeling
         out, _ = self.lstm2(fusion)
 
+        # Take last time step
         out = out[:, -1, :]
 
         return self.classifier(out)
