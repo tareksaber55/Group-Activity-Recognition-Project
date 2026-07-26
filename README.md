@@ -255,36 +255,6 @@ Accuracy: 88.63%  |  F1-Macro: 88.93%  |  F1-Weighted: 88.62%
 
 ---
 
-### **Confusion Matrices Visualization**
-
-#### **B1: Single-Frame CNN (72.10% accuracy)**
-
-```
-Baseline 1 shows significant confusion, especially between:
-  - l-pass ↔ r-pass (low temporal context)
-  - l-set ↔ r-pass (spatial ambiguity)
-→ Single frames lack sufficient discriminative information
-```
-
-#### **B8: Two-stage Model with 2 sub-groups (88.63% accuracy)** ⭐
-
-```
-Strong diagonal dominance indicates:
-  ✓ l-pass: 89% correctly classified
-  ✓ r-pass: 89% correctly classified
-  ✓ l-spike: 94% correctly classified
-  ✓ r-spike: 90% correctly classified
-  ✓ l-set: 92% correctly classified
-  ✓ l-winpoint: 92% correctly classified
-  ✓ r-winpoint: 87% correctly classified
-
-Minor confusions:
-  • r-set slightly confused with l-pass (3% false negative)
-  • l-winpoint with slight confusion on set classifications
-```
-
----
-
 
 ## ⚙️ Installation
 
