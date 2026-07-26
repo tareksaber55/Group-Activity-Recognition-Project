@@ -184,6 +184,7 @@ Each video clip provides:
 - **Person tracklets**: Bounding boxes across a temporal window of frames
 - **Per-person action labels**: 9 classes (waiting, setting, digging, falling, spiking, blocking, jumping, moving, standing)
 - **Group activity labels**: 8 classes (l-pass, r-pass, l-spike, r-spike, l-set, r-set, l-winpoint, r-winpoint)
+
 dataset link : https://drive.google.com/drive/folders/1rmsrG1mgkwxOKhsr-QYoi9Ss92wQmCOS
 ---
 
