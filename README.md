@@ -21,7 +21,7 @@ Recognizing collective human activities (e.g. team sports, social gatherings) re
 
 This project re-implements and extends the original **two-stage hierarchical LSTM** proposed in the papers above, with modernized components (updated CNN backbones, training utilities, configs, and evaluation tooling) on top of the original architecture. I implement **8 different baselines** mentioned in paper, from simple single-frame CNN classifiers to advanced multi-stream hierarchical temporal models.
 
-![Architecture](data\architecture2.jpg)
+![alt text](architecture2.jpg)
 
 ## 🏗️ Architecture & Baselines
 
