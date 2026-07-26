@@ -282,7 +282,6 @@ pip install -r requirements.txt
 ### Dependencies
 - PyTorch (CNN + LSTM modules)
 - TorchVision (ResNet50 backbone)
-- NumPy & Pandas (data handling)
 - scikit-learn (evaluation metrics)
 - PyYAML (configuration files)
 - TensorBoard (training visualization)
@@ -321,17 +320,17 @@ LEARNING_RATE: 0.0001
 ### 3. Train a Baseline
 
 ```bash
-# Train B1 (Single-Frame CNN)
+# Train B1
 python train/b1.py
 
-# Train B4 (Image-Level LSTM)
+# Train B4
 python train/b4.py
 
-# Train B5 (Hierarchical 2-Stage)
+# Train B5
 python train/b5_player_classifier.py  # Train person-level classifier first
 python train/b5_group_classifier.py   # Then train group classifier
 
-# Train B8 (Advanced Hierarchical - Recommended) ⭐
+# Train B8
 python train/b8.py
 
 ```
